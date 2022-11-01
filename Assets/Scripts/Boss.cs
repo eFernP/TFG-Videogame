@@ -20,8 +20,8 @@ public class Boss : MonoBehaviour
 
     private float initialPosition;
     private int rotationSpeed = 600;
-    private int invisibleSpeed = 30;
-    private int speedBeforeCharge = 8;
+    private float invisibleSpeed = 40f;
+    private float speedBeforeCharge = 7f;
 
     private Animator animator;
     private BossStatus status = BossStatus.NotMoving;
@@ -31,7 +31,7 @@ public class Boss : MonoBehaviour
     private float targetDistance;
     private Quaternion facingTargetRotation;
 
-    private int minDistanceForSpecialAttack = 10;
+    private int minDistanceForSpecialAttack = 8;
 
 
     public GameObject pointer;
@@ -43,6 +43,8 @@ public class Boss : MonoBehaviour
 
     private float ROOM_CENTER_X = 0.5f;
     private float ROOM_CENTER_Z = 25f;
+
+    private float BOSS_SIZE = 3f;
 
     // Start is called before the first frame update
     void Start()
@@ -95,12 +97,15 @@ public class Boss : MonoBehaviour
             RaycastHit hit;
             bool hasObstacle = Physics.Linecast(this.transform.position, finalPoint, out hit);
 
+            
+
             if (dist > minDistanceForSpecialAttack)
             {
 
                 if (hasObstacle && hit.collider.name != "Floor")
                 {
-                    targetPosition = this.transform.position + (unitVector * (hit.distance));
+                    Debug.Log("BOSS WILL COLLIDE WITH" + hit.collider.name);
+                    targetPosition = this.transform.position + (unitVector * (hit.distance - BOSS_SIZE)); 
                    
                 }
                 else
@@ -284,6 +289,12 @@ public class Boss : MonoBehaviour
 
     void doPhase1()
     {
+
+        if (animator.GetBool("isInCombat") == false)
+        {
+            animator.SetBool("isInCombat", true);
+        }
+
         checkSpecialAttack();
 
         if (isSpecialAttack)
@@ -296,14 +307,14 @@ public class Boss : MonoBehaviour
             float heroPosition = getHeroPosition();
             makeVisible();
 
-            if (heroPosition > 1)
+            if (heroPosition > 1.5f)
             {
                 Quaternion rotation = Quaternion.LookRotation(hero.transform.position - this.transform.position);
                 this.transform.rotation = Quaternion.RotateTowards(this.transform.rotation, rotation, rotationSpeed * Time.deltaTime);
                 this.transform.Translate(Vector3.forward * speedBeforeCharge * Time.deltaTime);
             }
 
-            if (getHeroPosition() < 5)
+            if (getHeroPosition() < minDistanceForSpecialAttack/2)
             {
                 if (animator.GetBool("isAttackingFast") == false)
                 {

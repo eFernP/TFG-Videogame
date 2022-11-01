@@ -13,14 +13,14 @@ public class Audio : MonoBehaviour
 
     private bool isHeroSoundActive = false;
 
-    public IEnumerator PlayHeroSound(AudioClip clip)
+    public IEnumerator PlayHeroSound(AudioClip clip, float waitTime)
     {
 
         if (!isHeroSoundActive)
         {
             isHeroSoundActive = true;
             source.PlayOneShot(clip);
-            yield return new WaitForSeconds(clip.length);
+            yield return new WaitForSeconds(waitTime);
             isHeroSoundActive = false;
         }
     }

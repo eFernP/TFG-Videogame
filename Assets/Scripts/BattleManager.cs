@@ -303,8 +303,12 @@ public class BattleManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Time.timeScale == 0f)
+        {
+            return;
+        }
 
-        if(currentPhase == 1)
+        if (currentPhase == 1)
         {
             ShowDialogues();
         }

@@ -29,6 +29,3 @@ public enum Character
     Boss,
 }
 
-
-
-

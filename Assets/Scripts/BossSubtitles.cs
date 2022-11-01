@@ -27,22 +27,7 @@ public class BossSubtitles : MonoBehaviour
 
     public void setDialogue(Vocals[] vocals)
     {
-        //Debug.Log(text + " " + delay);
-        //subtitle.text = "HJOLA";
         StartCoroutine(showSubtitles(vocals));
     }
 
-    //private IEnumerator clearAfterSeconds(float delay)
-    //{
-    //    yield return new WaitForSeconds(delay);
-    //    subtitle.text = null;
-    //}
-
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

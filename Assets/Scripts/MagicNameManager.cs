@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,9 +7,7 @@ using UnityEditor;
 public class MagicNameManager : MonoBehaviour
 {
 
-    private static string[] MagicSyllables = { "A", "E", "I", "O", "U", "B"};
-
-    private string type = "Stone"; //TODO: Set after instantiate object
+    private string type = Constants.STONE_TYPE; //TODO: Set after instantiate object
 
     GameObject hero;
     GameObject initialText;
@@ -26,10 +25,20 @@ public class MagicNameManager : MonoBehaviour
     private Sprite[] NameSprites = new Sprite[NAME_LENGTH];
     private AudioClip[] NameAudioClips = new AudioClip[NAME_LENGTH];
 
-    public Sprite[] testSprites;
+    public Sprite[] graphemeSprites;
 
-    private GlobalConstants Constants;
+    private MagicNamesStack Names;
     private Player HeroScript;
+
+    //private Dictionary<string, Sprite> SyllableSprites = new Dictionary<string, Sprite>()
+    // {
+    //        {Constants.SYLLABLES[0], graphemeSprites[0]},
+    //        {Constants.SYLLABLES[1], graphemeSprites[1]},
+    //        {Constants.SYLLABLES[2], graphemeSprites[2]},
+    //        {Constants.SYLLABLES[3], graphemeSprites[3]},
+    //        {Constants.SYLLABLES[4], graphemeSprites[4]},
+    //        {Constants.SYLLABLES[5], graphemeSprites[5]},
+    // };
 
 
     // Start is called before the first frame update
@@ -51,8 +60,8 @@ public class MagicNameManager : MonoBehaviour
 
     void GetMagicName()
     {
-        Constants = GameObject.FindGameObjectsWithTag("GlobalConstants")[0].GetComponent<GlobalConstants>();
-        string StoneName = Constants.GetStoneName();
+        Names = GameObject.FindGameObjectsWithTag("SceneManager")[0].GetComponent<MagicNamesStack>();
+        string StoneName = Names.GetStoneName();
         MagicName = StoneName.Split('_');
 
         this.name = type + "_" + StoneName;
@@ -69,7 +78,7 @@ public class MagicNameManager : MonoBehaviour
             NameAudioClips[i] = AssetDatabase.LoadAssetAtPath("Assets/Audio/Syllable_" + MagicName[i] + ".mp3", typeof(AudioClip)) as AudioClip;
             //NameSprites[i] = AssetDatabase.LoadAssetAtPath("Assets/UI/Sprites/Syllable_" + MagicName[i], typeof(Sprite)) as Sprite; NOT WORKING
 
-            NameSprites[i] = testSprites[i];
+            NameSprites[i] = Array.Find(graphemeSprites, element => element.name == "Syllable_"+MagicName[i]);
         }
     }
 

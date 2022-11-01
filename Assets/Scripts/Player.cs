@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class Player: MonoBehaviour
+public class Player : MonoBehaviour
 {
-   
-    public float speed;
+
+    private float speed;
     public float rotationSpeed;
     public Transform cameraTransform;
 
@@ -19,9 +19,16 @@ public class Player: MonoBehaviour
     public int lifeCounter;
     private bool isInvulnerable;
 
+
+    public GameObject RestartMenuUI;
+    public WarningMessage warning;
     public SliderBar breathBar;
     private int MAX_BREATH_VALUE = 50;
     private static int NAME_LENGTH = 3;
+    private int SYLLABLE_BREATH_VALUE = 5;
+    private float SPEED = 11f;
+    private float SLOW_SPEED = 8f;
+    private float SECONDS_BETWEEN_SYLLABLES = 0.2f;
 
     private AudioClip[] NameAudioClips = new AudioClip[NAME_LENGTH];
     public Sprite[] testSprites;
@@ -48,12 +55,12 @@ public class Player: MonoBehaviour
 
     private Dictionary<KeyCode, string> MagicSyllables = new Dictionary<KeyCode, string>()
      {
-            {KeyCode.I, "A"},
-            {KeyCode.O, "E"},
-            {KeyCode.P, "I"},
-            {KeyCode.K, "O"},
-            {KeyCode.L, "U"},
-            {KeyCode.BackQuote, "B"},
+            {KeyCode.I, Constants.SYLLABLES[0]},
+            {KeyCode.O, Constants.SYLLABLES[1]},
+            {KeyCode.P, Constants.SYLLABLES[2]},
+            {KeyCode.K, Constants.SYLLABLES[3]},
+            {KeyCode.L, Constants.SYLLABLES[4]},
+            {KeyCode.BackQuote, Constants.SYLLABLES[5]}, //Ñ
      };
 
     private Dictionary<KeyCode, MagicSyllable> MagicNameFiles = new Dictionary<KeyCode, MagicSyllable>();
@@ -105,6 +112,7 @@ public class Player: MonoBehaviour
 
     private void OnApplicationFocus(bool focus)
     {
+        Debug.Log("APPLICATION FOCUS???" + focus);
         if (focus)
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -120,7 +128,7 @@ public class Player: MonoBehaviour
     {
         characterController.enabled = false;
         transform.position = new Vector3(position.x, 0, position.z);
-    
+
         characterController.enabled = true;
     }
 
@@ -169,18 +177,18 @@ public class Player: MonoBehaviour
     }
 
 
-     void checkPose(int pose, KeyCode keyCode)
+    void checkPose(int pose, KeyCode keyCode)
     {
         if (Input.GetKeyDown(keyCode))
         {
             currentPose = pose;
             animator.SetBool("isRunning", false);
-            animator.SetBool("isDoingPose"+pose, true);
+            animator.SetBool("isDoingPose" + pose, true);
         }
         if (Input.GetKeyUp(keyCode))
         {
             currentPose = 0;
-            animator.SetBool("isDoingPose"+pose, false);
+            animator.SetBool("isDoingPose" + pose, false);
             pronouncedName.Clear();
         }
     }
@@ -188,22 +196,33 @@ public class Player: MonoBehaviour
 
     void checkVoice()
     {
+
         foreach (KeyValuePair<KeyCode, MagicSyllable> syllable in MagicNameFiles)
         {
             if (Input.GetKeyDown(syllable.Key))
             {
                 Debug.Log("PRESSED" + syllable.Value.Name);
-                StartCoroutine(ShowSprite(syllable.Key, syllable.Value.Clip.length));
-                StartCoroutine(AudioManager.PlayHeroSound(syllable.Value.Clip));
 
-                
-                pronouncedName.Add(syllable.Value.Name);
-
-                if(pronouncedName.Count == NAME_LENGTH)
+                if (GetBreath() >= SYLLABLE_BREATH_VALUE)
                 {
-                    onUseMagic();
-                    pronouncedName.Clear();
-                    Debug.Log("ELEMENT COUNT?"+ pronouncedName.Count);
+                    StartCoroutine(ShowSprite(syllable.Key, SECONDS_BETWEEN_SYLLABLES));
+                    StartCoroutine(AudioManager.PlayHeroSound(syllable.Value.Clip, SECONDS_BETWEEN_SYLLABLES));
+
+                    DecreaseBreath(SYLLABLE_BREATH_VALUE);
+
+                    pronouncedName.Add(syllable.Value.Name);
+
+
+                    if (pronouncedName.Count == NAME_LENGTH)
+                    {
+                        onUseMagic();
+                        pronouncedName.Clear();
+                        Debug.Log("ELEMENT COUNT?" + pronouncedName.Count);
+                    }
+                }
+                else
+                {
+                    StartCoroutine(warning.ShowMessage());
                 }
 
             }
@@ -214,6 +233,8 @@ public class Player: MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Time.timeScale = 1f;
+        speed = SPEED;
         lifeCounter = lifePoints.Length;
         animator = GetComponent<Animator>();
         characterController = GetComponent<CharacterController>();
@@ -228,14 +249,30 @@ public class Player: MonoBehaviour
         GraphemeRenderer = this.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
         getMagicNameFiles();
 
+        Debug.Log(testSprites[0].name);
+
     }
+
 
     // Update is called once per frame
     void Update()
     {
+
+        if (Time.timeScale == 0f)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            return;
+        }
+        else if(Cursor.lockState == CursorLockMode.None)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+
         bool isMoving = isPressingMovementKey();
         bool isRunning = animator.GetBool("isRunning");
         float breathValue = breathBar.GetValue();
+
+
 
         checkPose(1, KeyCode.Alpha1);
         checkPose(2, KeyCode.Alpha2);
@@ -252,10 +289,25 @@ public class Player: MonoBehaviour
             }
             move();
 
-            
-            if(breathValue > 0)
+
+            if (breathValue > 0)
             {
-                breathBar.SetValue(breathBar.GetValue() - Time.deltaTime * 4);
+                breathBar.SetValue(breathBar.GetValue() - Time.deltaTime * 3);
+
+                if(speed != SPEED)
+                {
+                    animator.speed = 1f;
+                    speed = SPEED;
+                }
+
+            }
+            else
+            {
+                if (speed != SLOW_SPEED)
+                {
+                    animator.speed = 0.75f;
+                    speed = SLOW_SPEED;
+                }
             }
 
         }
@@ -269,7 +321,7 @@ public class Player: MonoBehaviour
 
             if (breathValue < MAX_BREATH_VALUE)
             {
-                breathBar.SetValue(breathBar.GetValue() + Time.deltaTime * 3);
+                breathBar.SetValue(breathBar.GetValue() + Time.deltaTime * 10);
             }
 
 
@@ -277,7 +329,14 @@ public class Player: MonoBehaviour
     }
 
 
-    void OnTriggerEnter(Collider collider)
+    void FinishGame()
+    {
+        RestartMenuUI.SetActive(true);
+        Time.timeScale = 0f;
+    }
+
+
+    void OnTriggerStay(Collider collider)
     {
         Debug.Log("COLLISION" + collider.name);
 
@@ -290,9 +349,15 @@ public class Player: MonoBehaviour
                 StartCoroutine(MakeInvulnerable());
             }
 
-
-            if(collider.name == "Boss")
+            if(lifeCounter == 0)
             {
+                FinishGame();
+            }
+
+
+            if (collider.name == "Boss")
+            {
+                Debug.Log("HANDLE BOSS COLLISION");
                 boss.handleCollision();
             }
             else
@@ -300,8 +365,8 @@ public class Player: MonoBehaviour
                 Destroy(collider.gameObject);
             }
 
-        }           
-        
+        }
+
     }
 
 

@@ -9,6 +9,7 @@ TagManager:
   - GlobalConstants
   - Stone
   - Projectile
+  - SceneManager
   layers:
   - Default
   - TransparentFX

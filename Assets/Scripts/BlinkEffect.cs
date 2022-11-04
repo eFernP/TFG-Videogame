@@ -45,7 +45,7 @@ public class BlinkEffect : MonoBehaviour
         
     }
 
-    void onDisable()
+    void OnDisable()
     {
         Player.onStartInvulnerability -= startBlinking;
         Player.onFinishInvulnerability -= finishBlinking;

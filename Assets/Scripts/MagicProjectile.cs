@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MagicProjectile : MonoBehaviour
 {
-    private float Speed = 25f;
+    private float Speed = 30f;
     // Start is called before the first frame update
     void Start()
     {

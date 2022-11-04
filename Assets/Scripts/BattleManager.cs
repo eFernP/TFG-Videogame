@@ -17,7 +17,7 @@ public class BattleManager : MonoBehaviour
     public Sprite defaultPanelSprite;
     public GameObject HeroCanvas;
     public SliderBar friendshipBar;
-
+    public GameObject FinishMenuUI;
 
     private float panelSize = 0f;
     private int selectedPanel;
@@ -28,6 +28,7 @@ public class BattleManager : MonoBehaviour
 
     private static int MAX_NUMBER_OF_PANELS = 4;
     private static int MAX_FRIENDSHIP_VALUE = 100;
+    private static int MAX_ROUND_NUMBER = 2;
 
     private Player playerScript;
 
@@ -38,38 +39,22 @@ public class BattleManager : MonoBehaviour
 
     private bool hasBlockedButtons;
 
-    private int currentPhase = 1;
+    private int currentPhase;
 
+    private Dictionary<int, HeroDialogue> HeroDialogues;
+    private Dictionary<int, BossDialogue> BossDialogues;
 
-    private Dictionary<int, HeroDialogue> HeroDialogues = new Dictionary<int, HeroDialogue>()
-     {
-            {1, new HeroDialogue(1, "No me hagas daño, ¡por favor!", 1, new int[] { 3 }, new int[]{}, 10, 10)},
-            {2, new HeroDialogue(2, "Detente o lo lamentarás.", 2, new int[] { 4 }, new int[]{ }, -10, 10)},
-            {3, new HeroDialogue(3, "He venido a buscar a alguien.", 3, new int[]{ },  new int[]{ }, 5, 10)}, //CHANGE 3 FOR REAL DIALOGUE
-            {4, new HeroDialogue(4, "¿Sabes acaso quién soy?", 3, new int[]{ },  new int[]{ }, -5, 10)}
-     };
+    private bool hasBattleStarted;
 
+    private Dictionary<int, int> currentDialogues;
 
-    private Dictionary<int, BossDialogue> BossDialogues = new Dictionary<int, BossDialogue>()
-     {
-            {1, new BossDialogue(1, new Vocals[]{ new Vocals("testClip", "No debiste entrar aquí.") }) },
-            {2, new BossDialogue(2, new Vocals[]{ new Vocals("testClip", "Eres débil."), new Vocals("testClip", "No supones ninguna amenaza para mí.") }) },
-            {3, new BossDialogue(3, new Vocals[]{ new Vocals("testClip", "Allí fuera eres Irik el Lucero, el Esplendoroso,"), new Vocals("testClip", "el hijo predilecto de un reino que se desmorona."), new Vocals("testClip", "Aquí dentro no eres nadie.") }) }
-     };
+    private GameObject[] currentPanels;
 
+    private int[] RoundValues = {60, 100}; //60 is the sum of the max points the player can have in the first phase 1 plus 10
 
-
-    private Dictionary<int, int> currentDialogues = new Dictionary<int, int>()
-     {
-            {1, 1},
-            {2, 2},
-     };
-
-
-    private GameObject[] currentPanels = new GameObject[MAX_NUMBER_OF_PANELS];
-
-    private int[] RoundValues = { 50, 75, 100 };
     private int RoundNumber = 1;
+
+    private bool isDialogueActive;
 
     public int GetCurrentPhase()
     {
@@ -80,7 +65,8 @@ public class BattleManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Audio.onFinishDialogue += onFinishBossDialogue;
+        Debug.Log("START BATTLE MANAGER");
+        BossSubtitles.onFinishDialogue += onFinishBossDialogue;
 
         GameObject hero = GameObject.Find("Hero");
         AudioManager = hero.GetComponent<Audio>();
@@ -88,7 +74,19 @@ public class BattleManager : MonoBehaviour
         BossText = GameObject.Find("Subtitle").GetComponent<BossSubtitles>();
 
         friendshipBar.SetMaxValue(MAX_FRIENDSHIP_VALUE);
-        initPanels();
+        currentPanels = new GameObject[MAX_NUMBER_OF_PANELS];
+        currentPhase = 0;
+        HeroDialogues = Constants.HeroDialogues[0];
+        BossDialogues = Constants.BossDialogues[0];
+
+        currentDialogues = new Dictionary<int, int>()
+        {
+            {1, 1},
+            {2, 2},
+        };
+
+        hasBattleStarted = false;
+        isDialogueActive = false;
 
         //instantiatePanel(3);
         //addDialogue(3, 3);
@@ -140,14 +138,18 @@ public class BattleManager : MonoBehaviour
 
     void instantiatePanel(int index)
     {
+        Debug.Log("INSTANTIATE"+index);
+        Debug.Log(PanelPrefab);
         GameObject newPanel = Instantiate(PanelPrefab, new Vector3(0,0,0), Quaternion.identity, HeroCanvas.transform);
+        Debug.Log(newPanel);
+
         newPanel.name = "Panel_"+ index;
         RectTransform rectTransform = newPanel.GetComponent<RectTransform>();
         rectTransform.sizeDelta = new Vector2(panelSize, rectTransform.rect.height);
 
         RectTransform rectTransformText = newPanel.transform.GetChild(0).GetComponent<RectTransform>();
         rectTransformText.sizeDelta = new Vector2((panelSize/100)*80, rectTransformText.rect.height);
-
+        Debug.Log("INSTANTIATE 2");
         if (selectedPanel == index)
         {
             updatePanelSprite(newPanel, selectedPanelSprite);
@@ -157,7 +159,7 @@ public class BattleManager : MonoBehaviour
         {
             changePanelTransparency(newPanel, 0.5f);
         }
-
+        Debug.Log("instance" + index);
         currentPanels[index - 1] = newPanel;
 
     }
@@ -171,7 +173,7 @@ public class BattleManager : MonoBehaviour
             GameObject panel = currentPanels[currentDialogueId.Key - 1];
             currentPanels[currentDialogueId.Key - 1] = null;
             Destroy(panel);
-            Debug.Log("PANEL AFTER DESTROY??" + currentPanels[currentDialogueId.Key - 1]);
+            Debug.Log("PANEL AFTER DESTROY??");
         }
     }
 
@@ -181,9 +183,11 @@ public class BattleManager : MonoBehaviour
         selectedPanel = 1;
         calculatePanelSize();
 
+
+        Debug.Log("INIT");
         foreach (KeyValuePair<int, int> currentDialogueId in currentDialogues)
         {
-
+            Debug.Log("PAIRS "+currentDialogueId.Key + " " + currentDialogueId.Value);
             instantiatePanel(currentDialogueId.Key);
             addDialogue(currentDialogueId.Key, currentDialogueId.Value);
 
@@ -194,27 +198,61 @@ public class BattleManager : MonoBehaviour
 
     void onFinishBossDialogue()
     {
-        int[] newDialogues = HeroDialogues[currentDialogues[selectedPanel]].NextHeroDialogues;
-        int[] incompatibleDialogues = HeroDialogues[currentDialogues[selectedPanel]].IncompatibleDialogues;
-
-        int dialoguesIndex = 0;
-        for (int i = 1; i <= MAX_NUMBER_OF_PANELS; i++)
+        if(currentPhase == -1)
         {
-            if (i == selectedPanel || (currentDialogues.ContainsKey(i) && incompatibleDialogues.Contains(currentDialogues[i])))
-            {
-                currentDialogues.Remove(i);
-            }
-
-            if (dialoguesIndex < newDialogues.Length && !currentDialogues.ContainsKey(i))
-            {
-                currentDialogues.Add(i, newDialogues[dialoguesIndex]);
-                dialoguesIndex++;
-                
-            }
-
+            StartCoroutine(FinishGame());
+            return;
         }
-        
-        if(newDialogues.Length == 0)
+
+        int[] newDialogues;
+        int[] incompatibleDialogues;
+
+        if (selectedPanel == -1)
+        {
+            newDialogues = new int[] {1,2};
+            incompatibleDialogues = new int[] { };
+        }
+        else
+        {
+
+            newDialogues = HeroDialogues[currentDialogues[selectedPanel]].NextHeroDialogues;
+            incompatibleDialogues = HeroDialogues[currentDialogues[selectedPanel]].IncompatibleDialogues;
+        }
+
+
+        List<int> remainingDialogues = new List<int>();
+
+        bool removeAll = incompatibleDialogues.Length > 0 && incompatibleDialogues[0] == -1;
+
+        int panelsIndex = 1;
+
+        foreach (KeyValuePair<int, int> dialogue in currentDialogues)
+        {
+            if (!removeAll && dialogue.Key != selectedPanel && !incompatibleDialogues.Contains(dialogue.Value))
+            {
+                remainingDialogues.Add(dialogue.Value);
+            }
+        }
+
+        currentDialogues.Clear();
+
+        for (int i = 0; i < newDialogues.Length; i++)
+        {
+            currentDialogues.Add(panelsIndex, newDialogues[i]);
+            panelsIndex++;
+        }
+        foreach (int dialogue in remainingDialogues)
+        {
+            if (!currentDialogues.ContainsValue(dialogue))
+            {
+                currentDialogues.Add(panelsIndex, dialogue);
+                panelsIndex++;
+            }
+        }
+
+        isDialogueActive = false;
+
+        if (currentDialogues.Count == 0)
         {
             currentPhase = 2;
         }
@@ -263,6 +301,13 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    void startBossDialogue(Vocals[] vocals)
+    {
+        //AudioManager.StartDialogue(vocals); TODO: Enable when boss clips are done
+        BossText.setDialogue(vocals);
+        isDialogueActive = true;
+    }
+
 
     void ShowDialogues()
     {
@@ -284,15 +329,9 @@ public class BattleManager : MonoBehaviour
             int selectedDialogueId = currentDialogues[selectedPanel];
             int bossDialogueId = HeroDialogues[selectedDialogueId].BossAnswer;
 
-            if (bossDialogueId == -1)
-            {
-                Debug.Log("FINISH DIALOGUE");
-            }
-            else
-            {
-                AudioManager.StartDialogue(BossDialogues[bossDialogueId].Messages);
-                BossText.setDialogue(BossDialogues[bossDialogueId].Messages);
-            }
+
+            startBossDialogue(BossDialogues[bossDialogueId].Messages);
+            
 
             friendshipBar.SetValue(friendshipBar.GetValue() + HeroDialogues[selectedDialogueId].Friendship);
             playerScript.DecreaseBreath(HeroDialogues[selectedDialogueId].Breath);
@@ -300,30 +339,45 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+
+    IEnumerator FinishGame()
+    {
+        yield return new WaitForSeconds(1.5f);
+        FinishMenuUI.SetActive(true);
+        Time.timeScale = 0f;
+    }
+
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log("SELECTED PANEL VALUE" + selectedPanel);
         if (Time.timeScale == 0f)
         {
             return;
         }
 
-        if (currentPhase == 1)
+        if (currentPhase == 1 &&!isDialogueActive)
         {
             ShowDialogues();
         }
 
-
         if(currentPhase == 2 && friendshipBar.GetValue() >= RoundValues[RoundNumber-1] )
         {
-            if(RoundValues[RoundNumber - 1] < MAX_FRIENDSHIP_VALUE)
+            if(RoundNumber < MAX_ROUND_NUMBER)
             {
-                currentPhase = 1;
-                RoundNumber++;
+                    currentPhase = 1;
+                    BossDialogues = Constants.BossDialogues[RoundNumber];
+                    HeroDialogues = Constants.HeroDialogues[RoundNumber];
+                    RoundNumber++;
+                    selectedPanel = -1;
+                    startBossDialogue(BossDialogues[1].Messages);
+              
             }
             else
             {
                 Debug.Log("FINISH COMBAT");
+                currentPhase = -1;
+                startBossDialogue(Constants.LastBattleDialogues[0]);
             }
 
         }
@@ -331,8 +385,20 @@ public class BattleManager : MonoBehaviour
     }
 
 
-    void onDisable()
+    void OnTriggerEnter(Collider collider)
     {
-        Audio.onFinishDialogue += onFinishBossDialogue;
+        if(collider.name == "Hero" && !hasBattleStarted)
+        {
+            currentPhase = 1;
+            hasBattleStarted = true;
+            Debug.Log("INIT THE PANELS");
+            initPanels();
+        }
+    }
+
+    void OnDisable()
+    {
+        Debug.Log("DISABLE");
+        BossSubtitles.onFinishDialogue -= onFinishBossDialogue;
     }
 }

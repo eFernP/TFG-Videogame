@@ -75,7 +75,7 @@ public class MagicNameManager : MonoBehaviour
     {
         for(int i=0; i< NAME_LENGTH; i++)
         {
-            NameAudioClips[i] = AssetDatabase.LoadAssetAtPath("Assets/Audio/Syllable_" + MagicName[i] + ".mp3", typeof(AudioClip)) as AudioClip;
+            NameAudioClips[i] = Resources.Load<AudioClip>("Audio/Syllable_" + MagicName[i]);
             //NameSprites[i] = AssetDatabase.LoadAssetAtPath("Assets/UI/Sprites/Syllable_" + MagicName[i], typeof(Sprite)) as Sprite; NOT WORKING
 
             NameSprites[i] = Array.Find(graphemeSprites, element => element.name == "Syllable_"+MagicName[i]);
@@ -162,7 +162,7 @@ public class MagicNameManager : MonoBehaviour
 
     }
 
-    void onDisable()
+    void OnDisable()
     {
         Player.onUseMagic -= onUseMagic;
     }

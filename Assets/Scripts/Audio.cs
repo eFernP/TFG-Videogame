@@ -8,9 +8,6 @@ public class Audio : MonoBehaviour
 
     AudioSource source;
 
-    public delegate void FinishDialogue();
-    public static event FinishDialogue onFinishDialogue;
-
     private bool isHeroSoundActive = false;
 
     public IEnumerator PlayHeroSound(AudioClip clip, float waitTime)
@@ -32,12 +29,11 @@ public class Audio : MonoBehaviour
         foreach(Vocals v in vocals)
         {
             Debug.Log(v.Text);
-            AudioClip clip = AssetDatabase.LoadAssetAtPath("Assets/Audio/" + v.ClipPath + ".mp3", typeof(AudioClip)) as AudioClip;
+            AudioClip clip = Resources.Load<AudioClip>("Audio/" + v.ClipPath);
             //source.PlayOneShot(clip); UNCOMMENT when clips are ready
             yield return new WaitForSeconds(1); //Change for clip.length
         }
 
-        onFinishDialogue();
     }
 
 
@@ -49,8 +45,6 @@ public class Audio : MonoBehaviour
             source.PlayOneShot(clip);
             yield return new WaitForSeconds(clip.length);
         }
-
-        onFinishDialogue();
     }
 
 

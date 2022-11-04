@@ -6,7 +6,12 @@ public class BossSubtitles : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    TMP_Text subtitle; 
+    TMP_Text subtitle;
+
+    float WPM = 180;
+
+    public delegate void FinishDialogue();
+    public static event FinishDialogue onFinishDialogue;
 
     void Start()
     {
@@ -19,9 +24,13 @@ public class BossSubtitles : MonoBehaviour
         foreach (Vocals v in vocals)
         {
             subtitle.text = v.Text;
-            yield return new WaitForSeconds(1);
+            Debug.Log(v.Text);
+            string[] SplittedText = v.Text.Split(" ");
+            float seconds = (float)SplittedText.Length / WPM * 60;
+            yield return new WaitForSeconds(1f + seconds);
         }
         subtitle.text = null;
+        onFinishDialogue();
     }
 
 

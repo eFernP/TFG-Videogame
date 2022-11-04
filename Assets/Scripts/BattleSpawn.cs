@@ -19,7 +19,7 @@ public class BattleSpawn : MonoBehaviour
 
     private BattleManager BattleScript;
 
-    float SPAWN_TIME = 0.3f;
+    float SPAWN_TIME = 0.2f;
     float SpawnTimer;
     float SpawnStoneTimer;
     // Start is called before the first frame update

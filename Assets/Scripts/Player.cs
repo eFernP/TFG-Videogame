@@ -25,7 +25,7 @@ public class Player : MonoBehaviour
     public SliderBar breathBar;
     private int MAX_BREATH_VALUE = 50;
     private static int NAME_LENGTH = 3;
-    private int SYLLABLE_BREATH_VALUE = 5;
+    private int SYLLABLE_BREATH_VALUE = 3;
     private float SPEED = 11f;
     private float SLOW_SPEED = 8f;
     private float SECONDS_BETWEEN_SYLLABLES = 0.2f;
@@ -71,7 +71,7 @@ public class Player : MonoBehaviour
         int index = 0;
         foreach (KeyValuePair<KeyCode, string> syllable in MagicSyllables)
         {
-            AudioClip clip = AssetDatabase.LoadAssetAtPath("Assets/Audio/Syllable_" + syllable.Value + ".mp3", typeof(AudioClip)) as AudioClip;
+            AudioClip clip = Resources.Load<AudioClip>("Audio/Syllable_" + syllable.Value);
             MagicNameFiles.Add(syllable.Key, new MagicSyllable(syllable.Value, clip, testSprites[index]));
             index++;
         }
@@ -201,8 +201,6 @@ public class Player : MonoBehaviour
         {
             if (Input.GetKeyDown(syllable.Key))
             {
-                Debug.Log("PRESSED" + syllable.Value.Name);
-
                 if (GetBreath() >= SYLLABLE_BREATH_VALUE)
                 {
                     StartCoroutine(ShowSprite(syllable.Key, SECONDS_BETWEEN_SYLLABLES));
@@ -292,7 +290,7 @@ public class Player : MonoBehaviour
 
             if (breathValue > 0)
             {
-                breathBar.SetValue(breathBar.GetValue() - Time.deltaTime * 3);
+                breathBar.SetValue(breathBar.GetValue() - Time.deltaTime * 2f);
 
                 if(speed != SPEED)
                 {
@@ -335,11 +333,8 @@ public class Player : MonoBehaviour
         Time.timeScale = 0f;
     }
 
-
     void OnTriggerStay(Collider collider)
     {
-        Debug.Log("COLLISION" + collider.name);
-
         if (collider.name == "Boss" || collider.gameObject.tag == "Projectile")
         {
             if (lifeCounter > 0 && !isInvulnerable)
@@ -349,7 +344,7 @@ public class Player : MonoBehaviour
                 StartCoroutine(MakeInvulnerable());
             }
 
-            if(lifeCounter == 0)
+            if (lifeCounter == 0)
             {
                 FinishGame();
             }
@@ -357,7 +352,6 @@ public class Player : MonoBehaviour
 
             if (collider.name == "Boss")
             {
-                Debug.Log("HANDLE BOSS COLLISION");
                 boss.handleCollision();
             }
             else

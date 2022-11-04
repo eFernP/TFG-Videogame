@@ -21,7 +21,7 @@ public class Boss : MonoBehaviour
     private float initialPosition;
     private int rotationSpeed = 600;
     private float invisibleSpeed = 40f;
-    private float speedBeforeCharge = 7f;
+    private float speedBeforeCharge = 6.5f;
 
     private Animator animator;
     private BossStatus status = BossStatus.NotMoving;
@@ -44,15 +44,21 @@ public class Boss : MonoBehaviour
     private float ROOM_CENTER_X = 0.5f;
     private float ROOM_CENTER_Z = 25f;
 
-    private float BOSS_SIZE = 3f;
+
+    private int STONE_COLLISION_POINTS = 5;
+
+    private bool battleFinished = false;
+
 
     // Start is called before the first frame update
     void Start()
     {
+        this.gameObject.SetActive(true);
         initialPosition = this.transform.position.x;
         animator = GetComponent<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         hero = GameObject.Find("Hero");
+        animator.SetBool("isInCombat", false);
 
     }
 
@@ -104,9 +110,7 @@ public class Boss : MonoBehaviour
 
                 if (hasObstacle && hit.collider.name != "Floor")
                 {
-                    Debug.Log("BOSS WILL COLLIDE WITH" + hit.collider.name);
-                    targetPosition = this.transform.position + (unitVector * (hit.distance - BOSS_SIZE)); 
-                   
+                    targetPosition = this.transform.position + (unitVector * hit.distance); 
                 }
                 else
                 {
@@ -124,13 +128,13 @@ public class Boss : MonoBehaviour
                 specialAttackStep = 1;
 
 
-                //TO DEBUG
-                GameObject[] pointers = GameObject.FindGameObjectsWithTag("Pointer");
+                //POINTER TO DEBUG
+                //GameObject[] pointers = GameObject.FindGameObjectsWithTag("Pointer");
 
-                foreach (GameObject p in pointers)
-                    GameObject.Destroy(p);
+                //foreach (GameObject p in pointers)
+                //    GameObject.Destroy(p);
 
-                Instantiate(pointer, targetPosition, Quaternion.identity);
+                //Instantiate(pointer, targetPosition, Quaternion.identity);
 
 
             }
@@ -357,6 +361,20 @@ public class Boss : MonoBehaviour
         }
     }
 
+    void leaveRoom()
+    {
+        if (dissolveValue < invisibleMeshValue)
+        {
+            ChangeDissolveValue(invisibleMeshValue);
+        }
+        else
+        {
+            Debug.Log("FINISH BATTLE");
+            this.gameObject.SetActive(false);
+            battleFinished = true;
+            Debug.Log("BATTLE FINISHED");
+        }
+    }
 
 
 
@@ -365,7 +383,11 @@ public class Boss : MonoBehaviour
     {
         int currentPhase = BattleScript.GetCurrentPhase();
 
-        if (currentPhase == 1 || specialAttackStep != 0)
+        if(currentPhase == -1 && !battleFinished)
+        {
+            leaveRoom();
+        }
+        else if (currentPhase == 1 || specialAttackStep != 0)
         {
             doPhase1();
         }
@@ -375,16 +397,29 @@ public class Boss : MonoBehaviour
         }
 
 
+
     }
 
 
     void OnTriggerEnter(Collider collider)
     {
-        Debug.Log("BOSS HAS COLLISION" + collider.name);
+
         string other = collider.name.Split('_')[0];
-        if(other == "Stone")
+        if(other == "Stone" && BattleScript.GetCurrentPhase() == 2)
         {
-            friendshipBar.SetValue(friendshipBar.GetValue() + 5f);
+            friendshipBar.SetValue(friendshipBar.GetValue() + (float)STONE_COLLISION_POINTS);
+
+            //FOR TESTING
+            //if(roundForTesting == 2)
+            //{
+            //    friendshipBar.SetValue(100f);
+            //}
+            //else
+            //{
+            //    friendshipBar.SetValue(60f);
+            //    roundForTesting++;
+            //}
+
         }
 
     }

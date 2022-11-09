@@ -1332,7 +1332,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "872e9d9014444da9a4b9cb4d0602fc93",
     "m_Id": 0,
-    "m_DisplayName": "Fresnel Power",
+    "m_DisplayName": "FresnelPower",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -2127,11 +2127,11 @@
     "m_Guid": {
         "m_GuidSerialized": "c3c4882c-a662-4cec-93eb-aad13ce9181f"
     },
-    "m_Name": "Fresnel Power",
+    "m_Name": "FresnelPower",
     "m_DefaultRefNameVersion": 0,
     "m_RefNameGeneratedByDisplayName": "",
     "m_DefaultReferenceName": "Vector1_ff2338e3597b441b99253c4fb59b6cbb",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_FresnelPower",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",

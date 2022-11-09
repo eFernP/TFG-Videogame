@@ -30,6 +30,11 @@ public class MagicNameManager : MonoBehaviour
     private MagicNamesStack Names;
     private Player HeroScript;
 
+    private float UP_FORCE = 50;
+    private float FORWARD_FORCE = 200;
+
+    private bool isFalling = true;
+
     //private Dictionary<string, Sprite> SyllableSprites = new Dictionary<string, Sprite>()
     // {
     //        {Constants.SYLLABLES[0], graphemeSprites[0]},
@@ -125,7 +130,7 @@ public class MagicNameManager : MonoBehaviour
     {
         Rigidbody rb = this.GetComponent<Rigidbody>();
         //rb.AddForce(this.transform.forward * 30+this.transform.up*1, ForceMode.Impulse);
-        rb.AddForce(hero.transform.up * 10 + hero.transform.forward * 40, ForceMode.Impulse);
+        rb.AddForce(hero.transform.up * UP_FORCE + hero.transform.forward * FORWARD_FORCE, ForceMode.Impulse);
     }
 
     void onUseMagic()
@@ -134,7 +139,6 @@ public class MagicNameManager : MonoBehaviour
         if (type + "_" + pronouncedName == this.name)
         {
             int actionId = HeroScript.getAction();
-            Debug.Log("DO THIS ACTION" + actionId);
 
             if(actionId == 1)
             {
@@ -159,6 +163,23 @@ public class MagicNameManager : MonoBehaviour
         {
             Impulse();
         }
+
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log(collision.collider.name);
+
+        if (collision.collider.name == "Floor")
+        {
+            isFalling = false;
+        }
+
+        if (collision.collider.name == "Hero" && isFalling)
+        {
+            HeroScript.handleDamage();
+        }
+
 
     }
 

@@ -9,17 +9,21 @@ public class GameMenu : MonoBehaviour
     public static bool isGamePaused;
 
     public GameObject PauseMenuUI;
-
+    public GameObject RestartMenuUI;
+    public GameObject FinishMenuUI;
 
     void Start()
     {
         isGamePaused = false;
+
+        Debug.Log("MENIU??"+RestartMenuUI.active);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+
+        if (Input.GetKeyDown(KeyCode.Escape) && !RestartMenuUI.active && !FinishMenuUI.active)
         {
             if (isGamePaused)
             {

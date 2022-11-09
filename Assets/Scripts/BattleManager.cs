@@ -56,6 +56,8 @@ public class BattleManager : MonoBehaviour
 
     private bool isDialogueActive;
 
+    private float SCREEN_WIDTH_REFERENCE = 1920;
+
     public int GetCurrentPhase()
     {
         return currentPhase;
@@ -112,7 +114,7 @@ public class BattleManager : MonoBehaviour
 
     void calculatePanelSize()
     {
-        panelSize = (Screen.width - canvasPadding * 2 - (canvasPadding * (numberOfPanels - 1))) / numberOfPanels;
+        panelSize = (SCREEN_WIDTH_REFERENCE - canvasPadding * 2 - (canvasPadding * (numberOfPanels - 1))) / numberOfPanels;
     }
 
 

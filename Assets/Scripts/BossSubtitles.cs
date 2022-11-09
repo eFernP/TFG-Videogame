@@ -8,7 +8,7 @@ public class BossSubtitles : MonoBehaviour
 
     TMP_Text subtitle;
 
-    float WPM = 180;
+    float WPM = 150;
 
     public delegate void FinishDialogue();
     public static event FinishDialogue onFinishDialogue;
@@ -27,7 +27,7 @@ public class BossSubtitles : MonoBehaviour
             Debug.Log(v.Text);
             string[] SplittedText = v.Text.Split(" ");
             float seconds = (float)SplittedText.Length / WPM * 60;
-            yield return new WaitForSeconds(1f + seconds);
+            yield return new WaitForSeconds(1f+seconds);
         }
         subtitle.text = null;
         onFinishDialogue();

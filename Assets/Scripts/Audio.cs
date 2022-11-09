@@ -9,6 +9,12 @@ public class Audio : MonoBehaviour
     AudioSource source;
 
     private bool isHeroSoundActive = false;
+    private bool isPlayingSoundEffect = false;
+
+    public void PlaySound(AudioClip clip)
+    {
+        source.PlayOneShot(clip);
+    }
 
     public IEnumerator PlayHeroSound(AudioClip clip, float waitTime)
     {

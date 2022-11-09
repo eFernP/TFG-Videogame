@@ -6,7 +6,7 @@ using UnityEditor;
 
 public class Player : MonoBehaviour
 {
-
+    public BattleManager BattleScript;
     private float speed;
     public float rotationSpeed;
     public Transform cameraTransform;
@@ -50,7 +50,7 @@ public class Player : MonoBehaviour
     private int currentPose = 0;
     private bool hasVisibleSprite = false;
 
-    private List<string> pronouncedName = new List<string>(NAME_LENGTH);
+    private List<string> pronouncedName = new List<string>();
 
 
     private Dictionary<KeyCode, string> MagicSyllables = new Dictionary<KeyCode, string>()
@@ -112,7 +112,6 @@ public class Player : MonoBehaviour
 
     private void OnApplicationFocus(bool focus)
     {
-        Debug.Log("APPLICATION FOCUS???" + focus);
         if (focus)
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -136,10 +135,14 @@ public class Player : MonoBehaviour
     {
         onStartInvulnerability();
         isInvulnerable = true;
+
+
         yield return new WaitForSeconds(2);
 
         onFinishInvulnerability();
         isInvulnerable = false;
+
+
     }
 
     public float GetBreath()
@@ -168,7 +171,22 @@ public class Player : MonoBehaviour
 
     public string getPronouncedName()
     {
-        return String.Join("_", pronouncedName.ToArray());
+        string name = "";
+        int firstIndex = pronouncedName.Count - NAME_LENGTH;
+        for (int i = firstIndex; i < pronouncedName.Count; ++i)
+        {
+            // Do something with list[i]
+            if(i == firstIndex)
+            {
+                name = pronouncedName[i];
+            }
+            else
+            {
+                name = name + "_" + pronouncedName[i];
+            }
+            
+        }
+        return name;
     }
 
     public int getAction()
@@ -211,11 +229,9 @@ public class Player : MonoBehaviour
                     pronouncedName.Add(syllable.Value.Name);
 
 
-                    if (pronouncedName.Count == NAME_LENGTH)
+                    if (pronouncedName.Count >= NAME_LENGTH)
                     {
                         onUseMagic();
-                        pronouncedName.Clear();
-                        Debug.Log("ELEMENT COUNT?" + pronouncedName.Count);
                     }
                 }
                 else
@@ -224,6 +240,16 @@ public class Player : MonoBehaviour
                 }
 
             }
+        }
+    }
+
+    public void handleDamage()
+    {
+        if (!isInvulnerable)
+        {
+            lifeCounter--;
+            Destroy(lifePoints[lifeCounter]);
+            StartCoroutine(MakeInvulnerable());
         }
     }
 
@@ -256,11 +282,18 @@ public class Player : MonoBehaviour
     void Update()
     {
 
+        if (lifeCounter == 0)
+        {
+            FinishGame();
+        }
+
+
         if (Time.timeScale == 0f)
         {
             Cursor.lockState = CursorLockMode.None;
             return;
         }
+
         else if(Cursor.lockState == CursorLockMode.None)
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -335,33 +368,21 @@ public class Player : MonoBehaviour
 
     void OnTriggerStay(Collider collider)
     {
-        if (collider.name == "Boss" || collider.gameObject.tag == "Projectile")
+        if ((collider.name == "Boss" && BattleScript.GetCurrentPhase() == 1) || collider.gameObject.tag == "Projectile")
         {
-            if (lifeCounter > 0 && !isInvulnerable)
-            {
-                lifeCounter--;
-                Destroy(lifePoints[lifeCounter]);
-                StartCoroutine(MakeInvulnerable());
-            }
 
-            if (lifeCounter == 0)
-            {
-                FinishGame();
-            }
-
-
-            if (collider.name == "Boss")
+            if (collider.name == "Boss" && !isInvulnerable)
             {
                 boss.handleCollision();
             }
-            else
-            {
-                Destroy(collider.gameObject);
-            }
+
+            handleDamage();
 
         }
 
     }
+
+
 
 
 }

@@ -7,6 +7,9 @@ public class Boss : MonoBehaviour
 {
     public BattleManager BattleScript;
     public SliderBar friendshipBar;
+    public AudioClip slash;
+    public AudioClip specialSlash;
+    public AudioClip swoosh;
 
     private GameObject hero;
     public float duration;
@@ -49,6 +52,7 @@ public class Boss : MonoBehaviour
 
     private bool battleFinished = false;
 
+    private Audio AudioManager;
 
     // Start is called before the first frame update
     void Start()
@@ -59,6 +63,7 @@ public class Boss : MonoBehaviour
         navMeshAgent = GetComponent<NavMeshAgent>();
         hero = GameObject.Find("Hero");
         animator.SetBool("isInCombat", false);
+        AudioManager = hero.GetComponent<Audio>();
 
     }
 
@@ -190,6 +195,17 @@ public class Boss : MonoBehaviour
     public void handleCollision()
     {
         hasCollided = true;
+
+        if (isSpecialAttack)
+        {
+            AudioManager.PlaySound(specialSlash);
+        }
+        else
+        {
+            AudioManager.PlaySound(slash);
+        }
+
+       
     }
 
 
@@ -227,6 +243,7 @@ public class Boss : MonoBehaviour
             float angle = Quaternion.Angle(this.transform.rotation, facingTargetRotation);
             if(angle < 1 && hasAnimationFinished())
             {
+                AudioManager.PlaySound(swoosh);
                 animator.SetBool("isPreparing", false);
                 animator.SetBool("isCharging", true);
                 specialAttackStep = 3;

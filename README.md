@@ -8,7 +8,9 @@ PAC2: https://youtu.be/yI7RLrf0k44
 
 ## Executar el videojoc 
 
-Exectuar l'arxiu anomenat "My Project URP" que es troba dins de Builds/PAC2 (o la PAC que correspongui). Tots els arxius de la carpeta de la PAC han d'estar a la mateixa carpeta que l'executable per tal de que el joc funcioni.
+Exectuar l'arxiu anomenat "My Project URP" que es troba dins de Builds/PAC2 (o la PAC que correspongui) o dins de la carpeta que crea el installer de cada release. Tots els arxius de la carpeta de la PAC han d'estar a la mateixa carpeta que l'executable per tal de que el joc funcioni.
+
+És necessari tenir un ordinador amb sistema operatiu Windows.
 
 
 ## Controls

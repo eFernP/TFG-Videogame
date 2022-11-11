@@ -15,11 +15,11 @@ public class Player : MonoBehaviour
     private CharacterController characterController;
     private float originalStepOffset;
 
-    public GameObject[] lifePoints;
+    //public GameObject[] lifePoints;
     public int lifeCounter;
     private bool isInvulnerable;
 
-
+    private int LIFE_POINTS = 4;
     public GameObject RestartMenuUI;
     public WarningMessage warning;
     public SliderBar breathBar;
@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     private int SYLLABLE_BREATH_VALUE = 3;
     private float SPEED = 11f;
     private float SLOW_SPEED = 8f;
-    private float SECONDS_BETWEEN_SYLLABLES = 0.2f;
+    private float SECONDS_BETWEEN_SYLLABLES = 0.1f;
 
     private AudioClip[] NameAudioClips = new AudioClip[NAME_LENGTH];
     public Sprite[] testSprites;
@@ -52,15 +52,16 @@ public class Player : MonoBehaviour
 
     private List<string> pronouncedName = new List<string>();
 
+    public GameObject[] limits;
+
 
     private Dictionary<KeyCode, string> MagicSyllables = new Dictionary<KeyCode, string>()
      {
-            {KeyCode.I, Constants.SYLLABLES[0]},
-            {KeyCode.O, Constants.SYLLABLES[1]},
-            {KeyCode.P, Constants.SYLLABLES[2]},
-            {KeyCode.K, Constants.SYLLABLES[3]},
-            {KeyCode.L, Constants.SYLLABLES[4]},
-            {KeyCode.BackQuote, Constants.SYLLABLES[5]}, //Ñ
+            {KeyCode.Alpha1, Constants.SYLLABLES[0]},
+            {KeyCode.Alpha2, Constants.SYLLABLES[1]},
+            {KeyCode.Alpha3, Constants.SYLLABLES[2]},
+            {KeyCode.Alpha4, Constants.SYLLABLES[3]},
+            {KeyCode.Alpha5, Constants.SYLLABLES[4]},
      };
 
     private Dictionary<KeyCode, MagicSyllable> MagicNameFiles = new Dictionary<KeyCode, MagicSyllable>();
@@ -248,7 +249,7 @@ public class Player : MonoBehaviour
         if (!isInvulnerable)
         {
             lifeCounter--;
-            Destroy(lifePoints[lifeCounter]);
+            //Destroy(lifePoints[lifeCounter]);
             StartCoroutine(MakeInvulnerable());
         }
     }
@@ -259,7 +260,7 @@ public class Player : MonoBehaviour
     {
         Time.timeScale = 1f;
         speed = SPEED;
-        lifeCounter = lifePoints.Length;
+        lifeCounter = LIFE_POINTS;
         animator = GetComponent<Animator>();
         characterController = GetComponent<CharacterController>();
         originalStepOffset = characterController.stepOffset;
@@ -273,7 +274,14 @@ public class Player : MonoBehaviour
         GraphemeRenderer = this.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
         getMagicNameFiles();
 
-        Debug.Log(testSprites[0].name);
+
+        //limits = GameObject.FindGameObjectsWithTag("IgnorePlayerCollisions");
+
+        //foreach (GameObject limit in limits)
+        //{
+        //    Physics.IgnoreCollision(limit.transform.GetComponent<Collider>(), this.GetComponent<Collider>());
+        //}
+
 
     }
 
@@ -305,9 +313,8 @@ public class Player : MonoBehaviour
 
 
 
-        checkPose(1, KeyCode.Alpha1);
-        checkPose(2, KeyCode.Alpha2);
-        checkPose(3, KeyCode.Alpha3);
+        checkPose(1, KeyCode.Mouse0);
+        checkPose(2, KeyCode.Mouse1);
 
 
         checkVoice();

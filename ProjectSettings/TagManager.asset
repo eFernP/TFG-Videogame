@@ -10,14 +10,15 @@ TagManager:
   - Stone
   - Projectile
   - SceneManager
+  - IgnorePlayerCollisions
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Limit
   - Water
   - UI
-  - 
+  - IgnoreLimits
   - 
   - 
   - 

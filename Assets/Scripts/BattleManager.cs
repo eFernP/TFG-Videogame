@@ -67,7 +67,9 @@ public class BattleManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("START BATTLE MANAGER");
+
+        Physics.IgnoreLayerCollision(3, 6);
+
         BossSubtitles.onFinishDialogue += onFinishBossDialogue;
 
         GameObject hero = GameObject.Find("Hero");

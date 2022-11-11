@@ -11,8 +11,7 @@ public class MagicNameManager : MonoBehaviour
 
     GameObject hero;
     GameObject initialText;
-    GameObject syllableSprite;
-
+    GameObject sprites;
     Audio AudioManager;
 
     private bool hasVisibleText = false;
@@ -23,7 +22,6 @@ public class MagicNameManager : MonoBehaviour
 
     private string[] MagicName = new string[NAME_LENGTH];
     private Sprite[] NameSprites = new Sprite[NAME_LENGTH];
-    private AudioClip[] NameAudioClips = new AudioClip[NAME_LENGTH];
 
     public Sprite[] graphemeSprites;
 
@@ -31,7 +29,7 @@ public class MagicNameManager : MonoBehaviour
     private Player HeroScript;
 
     private float UP_FORCE = 50;
-    private float FORWARD_FORCE = 200;
+    private float FORWARD_FORCE = 300;
 
     private bool isFalling = true;
 
@@ -54,11 +52,9 @@ public class MagicNameManager : MonoBehaviour
         HeroScript = hero.GetComponent<Player>();
         AudioManager = hero.GetComponent<Audio>();
         initialText = this.transform.GetChild(0).gameObject;
-        syllableSprite = this.transform.GetChild(1).gameObject;
-
-
+        sprites = this.transform.GetChild(1).gameObject;
         GetMagicName();
-        GetMagicNameFiles();
+        GetMagicNameSprites();
 
     }
 
@@ -76,11 +72,11 @@ public class MagicNameManager : MonoBehaviour
     }
 
 
-    void GetMagicNameFiles()
+    void GetMagicNameSprites()
     {
         for(int i=0; i< NAME_LENGTH; i++)
         {
-            NameAudioClips[i] = Resources.Load<AudioClip>("Audio/Syllable_" + MagicName[i]);
+            //NameAudioClips[i] = Resources.Load<AudioClip>("Audio/Syllable_" + MagicName[i]);
             //NameSprites[i] = AssetDatabase.LoadAssetAtPath("Assets/UI/Sprites/Syllable_" + MagicName[i], typeof(Sprite)) as Sprite; NOT WORKING
 
             NameSprites[i] = Array.Find(graphemeSprites, element => element.name == "Syllable_"+MagicName[i]);
@@ -110,21 +106,43 @@ public class MagicNameManager : MonoBehaviour
         }
     }
 
-    public IEnumerator ShowSyllableSprites()
+    //public IEnumerator ShowSyllableSprites()
+    //{
+    //    hasVisibleSprite = true;
+    //    hasVisibleText = false;
+    //    for (int i = 0; i < NAME_LENGTH; i++)
+    //    {
+    //        SpriteRenderer rend = syllableSprite.GetComponent<SpriteRenderer>();
+    //        rend.sprite = NameSprites[i];
+    //        yield return new WaitForSeconds(NameAudioClips[i].length);
+    //    }
+    //    syllableSprite.GetComponent<SpriteRenderer>().sprite = null;
+    //    hasVisibleSprite = false;
+    //    hasVisibleText = true;
+    //}
+
+
+    IEnumerator ShowSyllableSprites()
     {
         hasVisibleSprite = true;
         hasVisibleText = false;
         for (int i = 0; i < NAME_LENGTH; i++)
         {
-            SpriteRenderer rend = syllableSprite.GetComponent<SpriteRenderer>();
+            SpriteRenderer rend = sprites.transform.GetChild(i).gameObject.GetComponent<SpriteRenderer>();
             rend.sprite = NameSprites[i];
-            yield return new WaitForSeconds(NameAudioClips[i].length);
+            
         }
-        syllableSprite.GetComponent<SpriteRenderer>().sprite = null;
-        hasVisibleSprite = false;
-        hasVisibleText = true;
-    }
+        yield return new WaitForSeconds(2);
+        for (int i = 0; i < NAME_LENGTH; i++)
+        {
+            SpriteRenderer rend = sprites.transform.GetChild(i).gameObject.GetComponent<SpriteRenderer>();
+            rend.sprite = null;
 
+        }
+        hasVisibleSprite = false;
+
+        checkText();
+    }
 
     void Impulse()
     {
@@ -136,6 +154,7 @@ public class MagicNameManager : MonoBehaviour
     void onUseMagic()
     {
         string pronouncedName = HeroScript.getPronouncedName();
+        Debug.Log("PRONOUNCED" + pronouncedName);
         if (type + "_" + pronouncedName == this.name)
         {
             int actionId = HeroScript.getAction();
@@ -155,7 +174,7 @@ public class MagicNameManager : MonoBehaviour
 
         if (hasVisibleText && Input.GetKeyUp(KeyCode.Space))
         {
-            StartCoroutine(AudioManager.PlayMagicName(NameAudioClips));
+            //StartCoroutine(AudioManager.PlayMagicName(NameAudioClips));
             StartCoroutine(ShowSyllableSprites());
         }
 

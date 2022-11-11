@@ -8,7 +8,7 @@ public class BlinkLight : MonoBehaviour
     private float speed = 10;
     private bool isBlinking;
 
-    private float[] MAX_INTENSITIES = {  1.25f, 2.5f, 3.75f, 5f };
+    private float[] MAX_INTENSITIES = {  0.5f, 2f, 4f, 8f };
     //private float currentMaxIntensity = 10f;
     private Light light;
 

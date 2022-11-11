@@ -7,7 +7,7 @@ public class BlinkMaterial : MonoBehaviour
     private float speed = 0.6f;
     private bool isBlinking;
 
-    private float[] MAX_INTENSITIES = { 0.075f, 0.15f, 0.225f, 0.3f };
+    private float[] MAX_INTENSITIES = { 0.01f, 0.1f, 0.2f, 0.3f };
     //private float currentMaxIntensity = 10f;
     private Material material;
 

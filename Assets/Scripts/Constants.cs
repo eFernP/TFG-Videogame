@@ -11,7 +11,7 @@ public class Constants
     //public const string SYLLABLE_TER = "Ter";
     //public const string SYLLABLE_KAL = "Kal";
 
-    public static string[] SYLLABLES = { "Ei", "Ri", "Ha", "Go", "Ter", "Kal" };
+    public static string[] SYLLABLES = { "Ei", "Ri", "Ha", "Go", "Kal" };
 
     public static string STONE_TYPE = "Stone";
     public static string ENEMY_TYPE = "Enemy";
@@ -20,7 +20,7 @@ public class Constants
     public static Dictionary<string, string> NAME_PREFIX = new Dictionary<string, string>()
      {
             {STONE_TYPE, SYLLABLES[3]},
-            {ENEMY_TYPE, SYLLABLES[5]},
+            {ENEMY_TYPE, SYLLABLES[2]},
      };
 
 

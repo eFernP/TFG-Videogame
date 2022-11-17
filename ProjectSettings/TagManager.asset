@@ -11,6 +11,9 @@ TagManager:
   - Projectile
   - SceneManager
   - IgnorePlayerCollisions
+  - Door
+  - Wall
+  - RandomUnit
   layers:
   - Default
   - TransparentFX

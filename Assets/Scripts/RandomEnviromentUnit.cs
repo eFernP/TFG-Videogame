@@ -11,6 +11,7 @@ public class RandomEnviromentUnit : MonoBehaviour
     private RandomEdgeType south;
     private RandomEdgeType east;
     private RandomEdgeType west;
+    private int[] coordinates;
     // 
 
 
@@ -63,6 +64,11 @@ public class RandomEnviromentUnit : MonoBehaviour
         this.edges[edgeName]=value;
     }
 
+    public void setCoordinates(int[] coordinates)
+    {
+        this.coordinates = coordinates;
+    }
+
     //deprecated
     public Dictionary<string, RandomEdgeType> getFeatures()
     {
@@ -74,6 +80,36 @@ public class RandomEnviromentUnit : MonoBehaviour
         features.Add("west", this.west);
 
         return features;
+    }
+
+    public int[] getCoordinates()
+    {
+        return this.coordinates;
+    }
+
+    public List<string> getEdgesWithWalls()
+    {
+        List<string> list = new List<string>();
+
+        if(this.edges["north"] == RandomEdgeType.Wall)
+        {
+            list.Add("north");
+        }
+        if (this.edges["south"] == RandomEdgeType.Wall)
+        {
+            list.Add("south");
+        }
+        if (this.edges["east"] == RandomEdgeType.Wall)
+        {
+            list.Add("east");
+        }
+        if (this.edges["west"] == RandomEdgeType.Wall)
+        {
+            list.Add("west");
+        }
+
+        return list;
+
     }
 
 }

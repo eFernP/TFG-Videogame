@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1750179475875466543}
   - component: {fileID: 6478983988160640514}
   - component: {fileID: 8704093884211923078}
+  - component: {fileID: -5727261807396905984}
   m_Layer: 0
   m_Name: Floor
   m_TagString: Untagged
@@ -28,6 +29,7 @@ Transform:
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
   m_LocalPosition: {x: 12.065445, y: 17.530811, z: -3.4564943}
   m_LocalScale: {x: 791.0101, y: 791.0101, z: 791.0101}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -51,6 +53,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -81,3 +84,16 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &-5727261807396905984
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8163060886774241706}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.01264232, y: 0.012642317, z: 0.0025284125}
+  m_Center: {x: -0.00000091549003, y: 0, z: -0.0012642063}

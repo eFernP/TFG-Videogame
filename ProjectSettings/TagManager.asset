@@ -14,6 +14,7 @@ TagManager:
   - Door
   - Wall
   - RandomUnit
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - Water
   - UI
   - IgnoreLimits
-  - 
+  - Maze
   - 
   - 
   - 

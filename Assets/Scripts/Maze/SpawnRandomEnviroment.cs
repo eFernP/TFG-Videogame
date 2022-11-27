@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 
 class WeightedUnit
 {
@@ -11,8 +12,9 @@ class WeightedUnit
 
 public class SpawnRandomEnviroment : MonoBehaviour
 {
-
+    public NavMeshSurface surface;
     public GameObject EnviromentUnit;
+    public GameObject TeleportUnit;
     public GameObject Floor;
     public GameObject Wall;
     public GameObject Door;
@@ -21,18 +23,35 @@ public class SpawnRandomEnviroment : MonoBehaviour
     public GameObject MapUnit;
     public GameObject Map;
 
-    private int FLOOR_SIZE = 10;
+    public GameObject Enemy;
+
+    public TeleportUnit EntranceTeleport;
+
+
+    private static float SCALE = 0.8f;
+    private float FLOOR_SIZE = 10 * SCALE;
     private int UI_FLOOR_SIZE = 25;
     private int MAX_DOORS_FOR_ROOM = 3;
     private int MAX_PATH = 3;
     private int MAX_DOORS = 50;
     int MAX_ROOM_SIZE = 5;
     int MIN_ROOM_SIZE = 1;
+    int ENEMY_NUMBER = 10;
+    int MIN_ROOM_NUMBER = 20;
 
     private int doorCounter = 0;
     private int pathCounter = 0;
+    private int roomCounter = 0;
     private int nestingIndex = 1;
+
+    private int emergencyCounter = 0;
     private Color pathColor;
+
+    private int entranceRoom;
+
+    List<WeightedUnit> WeightedUnits;
+
+    private bool isMazeActive = false;
 
     string getOppositeCardinalPoint(string cardinalPoint)
     {
@@ -64,7 +83,24 @@ public class SpawnRandomEnviroment : MonoBehaviour
         return 90;
     }
 
-    float getWallXPosition(string edgeName, int unitSize)
+    int getUnitRotation(string edgeName)
+    {
+        if (edgeName == "south")
+        {
+            return 0;
+        }
+        else if (edgeName == "east")
+        {
+            return -90;
+        }
+        else if (edgeName == "west")
+        {
+            return 90;
+        }
+        return 180;
+    }
+
+    float getWallXPosition(string edgeName, float unitSize)
     {
         if (edgeName == "north" || edgeName == "south")
         {
@@ -77,7 +113,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
         return FLOOR_SIZE;
     }
 
-    float getUIWallXPosition(string edgeName, int unitSize)
+    float getUIWallXPosition(string edgeName, float unitSize)
     {
         if (edgeName == "north" || edgeName == "south")
         {
@@ -90,7 +126,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
         return -((float)unitSize / 2);
     }
 
-    float getWallZPosition(string edgeName, int unitSize)
+    float getWallZPosition(string edgeName, float unitSize)
     {
         if (edgeName == "west" || edgeName == "east")
         {
@@ -104,7 +140,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
 
     }
 
-    float getUIWallZPosition(string edgeName, int unitSize)
+    float getUIWallZPosition(string edgeName, float unitSize)
     {
         if (edgeName == "east" || edgeName == "west")
         {
@@ -154,7 +190,6 @@ public class SpawnRandomEnviroment : MonoBehaviour
     {
         int[] adjacentPosition = findAdjacentPosition(edgeName, x, z);
         GameObject UnitInstance = GameObject.Find("EnviromentUnit_" + adjacentPosition[0] + "_" + adjacentPosition[1]);
-
         return UnitInstance;
     }
 
@@ -281,9 +316,9 @@ public class SpawnRandomEnviroment : MonoBehaviour
             float WallZPosition = getWallZPosition(edgeName, FLOOR_SIZE);
             int WallRotation = getWallRotation(edgeName);
 
-            GameObject UnitWall = Instantiate(isDoor ? Door : Wall, new Vector3(WallXPosition + FLOOR_SIZE * x, -2, WallZPosition + FLOOR_SIZE * z), Quaternion.Euler(90, WallRotation, 0), UnitInstance.transform);
+            GameObject UnitWall = Instantiate(isDoor ? Door : Wall, new Vector3(WallXPosition + FLOOR_SIZE * x, -2 * SCALE, WallZPosition + FLOOR_SIZE * z), Quaternion.Euler(90, WallRotation, 0), UnitInstance.transform);
             var unitRenderer = UnitWall.GetComponent<Renderer>();
-            unitRenderer.material.SetColor("_BaseColor", roomColor);
+            //unitRenderer.material.SetColor("_BaseColor", roomColor);
 
 
 
@@ -334,11 +369,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
         UnitInstance.name = "EnviromentUnit_" + x + "_" + z;
 
         UnitInstanceScript.setCoordinates(new int[] { x, z });
-
-        //Instantiate the floor
-        GameObject UnitFloor = Instantiate(Floor, new Vector3(FLOOR_SIZE / 2 + FLOOR_SIZE * x, 0, FLOOR_SIZE / 2 + FLOOR_SIZE * z), Quaternion.Euler(-90, 0, 0), UnitInstance.transform);
-        var unitRenderer = UnitFloor.GetComponent<Renderer>();
-        unitRenderer.material.SetColor("_BaseColor", roomColor);
+        UnitInstanceScript.Room = roomCounter;
 
         return UnitInstance;
     }
@@ -348,6 +379,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
     void generateRooms(string prevRoomDoorEdge = null, int[] prevRoomDoorPosition = null)
     {
 
+        roomCounter++;
         //the bottom left corner position that will have the first room
         int[] bottomLeftCorner = { 0, 0 };
         List<List<object>> createdDoorsLocation = new List<List<object>>();
@@ -357,8 +389,8 @@ public class SpawnRandomEnviroment : MonoBehaviour
 
         //to see every room in a different color
         //Color roomColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f); 
-        //Color roomColor = new Color(0.5f, 0.6f, 0.7f, 0.8f);
-        Color roomColor = pathColor;
+        Color roomColor = new Color(0.5f, 0.6f, 0.7f, 0.8f);
+        //Color roomColor = pathColor;
         // if there is prevRoomEdge, is not the first room so the bottomLeftCorner must be calculate
         if (prevRoomDoorEdge != null)
         {
@@ -478,7 +510,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
         GameObject wall = Instantiate(Wall, door.transform.position, door.transform.rotation, door.transform.parent.transform);
         Destroy(door);
 
-        door.name = "Wall_" + edgeName;
+        wall.name = "Wall_" + edgeName;
         return wall;
     }
 
@@ -531,7 +563,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
         return exteriorUnits;
     }
 
-    GameObject ReplaceWallForDoor(GameObject wall, string edgeName)
+    GameObject ReplaceWallForSpecialDoor(GameObject wall, string edgeName, Vector3 unitCoordinates)
     {
         RandomEnviromentUnit ParentScript = wall.transform.parent.gameObject.GetComponent<RandomEnviromentUnit>();
         int[] coordinates = ParentScript.getCoordinates();
@@ -540,8 +572,17 @@ public class SpawnRandomEnviroment : MonoBehaviour
 
         GameObject door = Instantiate(Door, wall.transform.position, wall.transform.rotation, wall.transform.parent.transform);
 
-        //TODO: Change for special floor with teleport
-        Instantiate(Floor, new Vector3(FLOOR_SIZE / 2 + FLOOR_SIZE * adjacentPosition[0], 0, FLOOR_SIZE / 2 + FLOOR_SIZE * adjacentPosition[1]), Quaternion.Euler(-90, 0, 0));
+        int rotation = getUnitRotation(edgeName);
+        GameObject teleport = Instantiate(TeleportUnit, new Vector3(FLOOR_SIZE / 2 + FLOOR_SIZE * adjacentPosition[0], 6f * SCALE, FLOOR_SIZE / 2 + FLOOR_SIZE * adjacentPosition[1]), Quaternion.Euler(0, getUnitRotation(edgeName), 0), this.transform);
+
+        TeleportUnit newTeleportScript = teleport.GetComponent<TeleportUnit>();
+        newTeleportScript.setDestination(EntranceTeleport.getCoordinates());
+        newTeleportScript.setCoordinates(unitCoordinates);
+        newTeleportScript.setOrientation(rotation);
+        newTeleportScript.setDestinationOrientation(EntranceTeleport.getOrientation());
+        EntranceTeleport.setDestination(unitCoordinates);
+        EntranceTeleport.setDestinationOrientation(rotation);
+        teleport.name = "TeleportUnit";
 
         Destroy(wall);
 
@@ -555,33 +596,37 @@ public class SpawnRandomEnviroment : MonoBehaviour
     void createSpecialDoor(GameObject unit)
     {
         string edge = getFirstFreeEdge(unit);
-        Debug.Log("free edge" + edge);
+
         foreach (Transform child in unit.transform)
         {
             if (child.gameObject.name == "Wall_" + edge)
             {
-                ReplaceWallForDoor(child.gameObject, edge);
+                ReplaceWallForSpecialDoor(child.gameObject, edge, unit.transform.position);
             }
         }
     }
 
 
-    void createSpecialRoomDoors()
+    Vector3[] createSpecialRoomDoors()
     {
 
         List<GameObject> units = getExteriorUnits();
         Debug.Log(units.Count);
 
         //the weight is the sum of the coordinates
-        List<WeightedUnit> weightedUnits = units.ConvertAll<WeightedUnit>((unit) =>
+        WeightedUnits = units.ConvertAll<WeightedUnit>((unit) =>
         new WeightedUnit { unit = unit, weight = unit.GetComponent<RandomEnviromentUnit>().getCoordinates()[0] + unit.GetComponent<RandomEnviromentUnit>().getCoordinates()[1] }
         );
 
-        GameObject entranceUnit = weightedUnits.Aggregate((i1, i2) => i1.weight > i2.weight ? i1 : i2).unit;
-        GameObject archiveUnit = weightedUnits.Aggregate((i1, i2) => i1.weight < i2.weight ? i1 : i2).unit;
+        GameObject entranceUnit = WeightedUnits.Aggregate((i1, i2) => i1.weight > i2.weight ? i1 : i2).unit;
+        GameObject archiveUnit = WeightedUnits.Aggregate((i1, i2) => i1.weight < i2.weight ? i1 : i2).unit;
 
         createSpecialDoor(entranceUnit);
         createSpecialDoor(archiveUnit);
+
+        entranceRoom = entranceUnit.GetComponent<RandomEnviromentUnit>().Room;
+
+        return new Vector3[] { entranceUnit.transform.position, archiveUnit.transform.position };
     }
 
 
@@ -655,15 +700,124 @@ public class SpawnRandomEnviroment : MonoBehaviour
 
     }
 
+    bool isPathAvailable(Vector3 from, Vector3 to)
+    {
+        NavMeshPath path = new NavMeshPath();
+        NavMesh.CalculatePath(from, to, NavMesh.AllAreas, path);
+        Debug.Log("path status " + path.status + " " + from + " " + to);
+        return path.status == NavMeshPathStatus.PathComplete;
+    }
 
-    void Start()
+    void spawnEnemies()
+    {
+        List<WeightedUnit> availablePositions = WeightedUnits;
+        availablePositions.RemoveAll(position => position.unit.GetComponent<RandomEnviromentUnit>().Room == entranceRoom);
+
+        for (int i = 0; i < ENEMY_NUMBER; i++)
+        {
+            if (availablePositions.Count == 0) break;
+            int randomPosition = Random.Range(0, availablePositions.Count);
+            GameObject unit = availablePositions[randomPosition].unit;
+
+            GameObject EnemyInstance = Instantiate(Enemy, new Vector3(unit.transform.position.x, 0f, unit.transform.position.z), Quaternion.identity, this.transform);
+
+            //Remove all the units that are in the same room as the new enemy
+            availablePositions.RemoveAll(position => position.unit.GetComponent<RandomEnviromentUnit>().Room == unit.GetComponent<RandomEnviromentUnit>().Room);
+            if (availablePositions.Count == 0) break;
+
+            //Get another random unit to mark as the enemy destination
+            Vector3 destination = new Vector3( 0, 0, 0);
+            int iterationsCounter = 0;
+            bool foundDestination = false;
+
+            while (!foundDestination && iterationsCounter < 10)
+            {
+                randomPosition = Random.Range(0, availablePositions.Count);
+                destination = availablePositions[randomPosition].unit.transform.position;
+                foundDestination = isPathAvailable(unit.transform.position, destination);
+                iterationsCounter++;
+            }
+
+            EnemyInstance.GetComponent<Enemy>().Origin = new Vector3(unit.transform.position.x, 0f, unit.transform.position.z);
+
+            if(foundDestination)
+            {
+                EnemyInstance.GetComponent<Enemy>().Destination = new Vector3(destination.x, 0f, destination.z);
+                availablePositions.RemoveAt(randomPosition);
+            }
+            else
+            {
+                EnemyInstance.GetComponent<Enemy>().Destination = new Vector3(unit.transform.position.x, 0f, unit.transform.position.z);
+            }
+            
+
+            
+        }
+    }
+
+
+    void spawnMaze()
     {
         generateRooms();
         removeExteriorDoors();
-        createSpecialRoomDoors();
-        generateMap();
+
+
+        surface.BuildNavMesh();
+
+        Vector3[] pathCoordinates = createSpecialRoomDoors();
+
+        //Debug.Log("FROM " + pathCoordinates[0] + " TO " + pathCoordinates[1]+ ": "+ isPathAvailable(pathCoordinates[0], pathCoordinates[1]));
+        //generateMap(); //UNCOMMENT
+
+        //if (roomCounter < 10 || emergencyCounter == 0)
+        if ((!isPathAvailable(pathCoordinates[0], pathCoordinates[1]) || roomCounter < MIN_ROOM_NUMBER) && emergencyCounter < 10)
+        {
+            Debug.Log("MAZE NOT CREATED AT FIRST TIME");
+            foreach (Transform child in this.transform)
+            {
+                GameObject.Destroy(child.gameObject);
+            }
+            emergencyCounter++;
+            doorCounter = 0;
+            pathCounter = 0;
+            roomCounter = 0;
+            nestingIndex = 1;
+
+            //NavMesh.RemoveNavMeshData(surface.NavMeshData);
+            //Destroy(surface);
+            //spawnMaze();
+            isMazeActive = false;
+        }
+        else
+        {
+            
+            isMazeActive = true;
+        }
+    }
+
+
+    void Start()
+    {
+        spawnMaze();
+        if (isMazeActive)
+        {
+            spawnEnemies();
+        }
+
 
     }
 
+    void Update()
+    {
+        if (!isMazeActive)
+        {
+            spawnMaze();
+            if (isMazeActive)
+            {
+                spawnEnemies();
+            }
+            
+        }
+    }
 }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 public class RandomEnviromentUnit : MonoBehaviour
 {
 
-    
+
     //deprecated
     private RandomEdgeType north;
     private RandomEdgeType south;
@@ -23,6 +23,8 @@ public class RandomEnviromentUnit : MonoBehaviour
         { "west", RandomEdgeType.Empty }
     };
 
+    private int room = 0;
+
 
     public Dictionary<string, RandomEdgeType> Edges
     {
@@ -35,7 +37,19 @@ public class RandomEnviromentUnit : MonoBehaviour
             edges = value; 
         }
     }
-    
+
+    public int Room
+    {
+        get
+        {
+            return room;
+        }
+        set
+        {
+            room = value;
+        }
+    }
+
 
     //deprecated
     public void setNorth(RandomEdgeType value)
@@ -73,7 +87,7 @@ public class RandomEnviromentUnit : MonoBehaviour
     public Dictionary<string, RandomEdgeType> getFeatures()
     {
         Dictionary<string, RandomEdgeType> features = new Dictionary<string, RandomEdgeType>();
-        
+
         features.Add("north", this.north);
         features.Add("south", this.south);
         features.Add("east", this.east);

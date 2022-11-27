@@ -20,6 +20,8 @@ public class BlinkMaterial : MonoBehaviour
         material = GetComponent<Renderer>().material;
         Player.onStartInvulnerability += startBlinking;
         Player.onFinishInvulnerability += finishBlinking;
+        MazePlayer.onStartInvulnerability += startBlinking;
+        MazePlayer.onFinishInvulnerability += finishBlinking;
     }
 
     void startBlinking()
@@ -79,5 +81,7 @@ public class BlinkMaterial : MonoBehaviour
     {
         Player.onStartInvulnerability -= startBlinking;
         Player.onFinishInvulnerability -= finishBlinking;
+        MazePlayer.onStartInvulnerability -= startBlinking;
+        MazePlayer.onFinishInvulnerability -= finishBlinking;
     }
 }

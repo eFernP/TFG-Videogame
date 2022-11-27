@@ -19,8 +19,11 @@ public class BlinkLight : MonoBehaviour
     void Start()
     {
         light = GetComponent<Light>();
+        light = GetComponent<Light>();
         Player.onStartInvulnerability += startBlinking;
         Player.onFinishInvulnerability += finishBlinking;
+        MazePlayer.onStartInvulnerability += startBlinking;
+        MazePlayer.onFinishInvulnerability += finishBlinking;
     }
 
     void startBlinking()
@@ -73,5 +76,7 @@ public class BlinkLight : MonoBehaviour
     {
         Player.onStartInvulnerability -= startBlinking;
         Player.onFinishInvulnerability -= finishBlinking;
+        MazePlayer.onStartInvulnerability -= startBlinking;
+        MazePlayer.onFinishInvulnerability -= finishBlinking;
     }
 }

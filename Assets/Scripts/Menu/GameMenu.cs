@@ -15,8 +15,6 @@ public class GameMenu : MonoBehaviour
     void Start()
     {
         isGamePaused = false;
-
-        Debug.Log("MENIU??"+RestartMenuUI.active);
     }
 
     // Update is called once per frame
@@ -53,7 +51,7 @@ public class GameMenu : MonoBehaviour
 
     public void ReturnToMenu()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+        SceneManager.LoadScene("MenuScene");
     }
 
     public void Restart()

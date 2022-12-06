@@ -10,6 +10,10 @@ public class TeleportUnit : MonoBehaviour
     public int destinationOrientation;
 
     private int room;
+    public bool hasMazeDestination;
+
+    private GameObject SceneManager;
+    private Collider collider;
 
     public int Room
     {
@@ -61,5 +65,30 @@ public class TeleportUnit : MonoBehaviour
     public int getDestinationOrientation()
     {
         return destinationOrientation;
+    }
+
+
+    void Start()
+    {
+        if (hasMazeDestination == null)
+        {
+            Debug.Log("HAS NULL BOOL");
+            hasMazeDestination = false;
+        }
+
+        SceneManager = GameObject.FindGameObjectsWithTag("SceneManager")[0];
+        collider = this.GetComponent<BoxCollider>();
+    }
+
+    void Update()
+    {
+        if (SceneManager.GetComponent<Timer>().hasEnded())
+        {
+            collider.isTrigger = false;
+        }
+        else
+        {
+            collider.isTrigger = true;
+        }
     }
 }

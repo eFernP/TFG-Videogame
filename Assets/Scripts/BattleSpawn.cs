@@ -68,6 +68,7 @@ public class BattleSpawn : MonoBehaviour
                 currentStones.RemoveAll(item => item == null);
                 if (currentStones.Count < MAX_STONE_NUMBER)
                 {
+                    Debug.Log("SPAWN STONE");
                     SpawnStone();
                     SpawnStoneTimer = Random.Range(SPAWN_TIME * 10, SPAWN_TIME * 20);
                 }

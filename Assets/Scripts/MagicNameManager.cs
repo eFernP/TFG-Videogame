@@ -26,7 +26,9 @@ public class MagicNameManager : MonoBehaviour
     public Sprite[] graphemeSprites;
 
     private MagicNamesStack Names;
-    private Player HeroScript;
+    private Player playerManager;
+    private PlayerVoiceManager playerVoiceManager;
+    private PlayerPoseManager playerPoseManager;
 
     private float UP_FORCE = 50;
     private float FORWARD_FORCE = 300;
@@ -47,9 +49,11 @@ public class MagicNameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Player.onUseMagic += onUseMagic;
+        PlayerVoiceManager.onUseMagic += onUseMagic;
         hero = GameObject.Find("Hero");
-        HeroScript = hero.GetComponent<Player>();
+        playerManager = hero.GetComponent<Player>();
+        playerVoiceManager = hero.GetComponent<PlayerVoiceManager>();
+        playerPoseManager = hero.GetComponent<PlayerPoseManager>();
         AudioManager = hero.GetComponent<Audio>();
         initialText = this.transform.GetChild(0).gameObject;
         sprites = this.transform.GetChild(1).gameObject;
@@ -153,11 +157,11 @@ public class MagicNameManager : MonoBehaviour
 
     void onUseMagic()
     {
-        string pronouncedName = HeroScript.getPronouncedName();
-        Debug.Log("PRONOUNCED" + pronouncedName);
+        string pronouncedName = playerVoiceManager.getPronouncedName();
+        Debug.Log("USE MAGIC"+ pronouncedName);
         if (type + "_" + pronouncedName == this.name)
         {
-            int actionId = HeroScript.getAction();
+            int actionId = playerPoseManager.getAction();
 
             if(actionId == 1)
             {
@@ -196,7 +200,7 @@ public class MagicNameManager : MonoBehaviour
 
         if (collision.collider.name == "Hero" && isFalling)
         {
-            HeroScript.handleDamage();
+            playerManager.handleDamage();
         }
 
 
@@ -204,6 +208,6 @@ public class MagicNameManager : MonoBehaviour
 
     void OnDisable()
     {
-        Player.onUseMagic -= onUseMagic;
+        PlayerVoiceManager.onUseMagic -= onUseMagic;
     }
 }

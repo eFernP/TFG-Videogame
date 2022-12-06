@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
     private float FAST_SPEED = 20f;
     private float ROTATION_SPEED = 1000f;
 
-    private float UNCOVERED_PLAYER_DISTANCE = 10f;
+    private float UNCOVERED_PLAYER_DISTANCE = 20f;
     private float COVERED_PLAYER_DISTANCE = 4f;
     private float ATTACK_DISTANCE = 2.5f;
 
@@ -128,13 +128,14 @@ public class Enemy : MonoBehaviour
 
         if (!foundPlayer)
         {
-            Quaternion rotation = Quaternion.LookRotation(Player.transform.position - this.transform.position);
-            this.transform.rotation = Quaternion.RotateTowards(this.transform.rotation, rotation, ROTATION_SPEED * Time.deltaTime);
             //agent.SetDestination(Player.transform.position);
             this.transform.Translate(Vector3.forward * FAST_SPEED * Time.deltaTime);
         }
-            
-        
+
+        Quaternion rotation = Quaternion.LookRotation(Player.transform.position - this.transform.position);
+        this.transform.rotation = Quaternion.RotateTowards(this.transform.rotation, rotation, ROTATION_SPEED * Time.deltaTime);
+
+
         //Debug.Log(animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
         //Debug.Log("attacking" + animator.GetBool("isAttacking"));
         //Debug.Log("moving" + animator.GetBool("isMoving"));
@@ -153,7 +154,7 @@ public class Enemy : MonoBehaviour
 
     void checkHunt()//TODO: Check player also if has light turned on
     {
-        bool isPlayerCovered = Player.GetComponent<MazePlayer>().getIsCovered();
+        bool isPlayerCovered = Player.GetComponent<Player>().getIsCovered();
         float playerDistance = isPlayerCovered ? COVERED_PLAYER_DISTANCE : UNCOVERED_PLAYER_DISTANCE;
 
         if(!isHunting && !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && getHeroPosition() < playerDistance)

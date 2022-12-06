@@ -13,10 +13,10 @@ public class Boss : MonoBehaviour
 
     private GameObject hero;
     public float duration;
-    private float dissolveValue = 0;
+    private float dissolveValue = 0.01f;
 
-    private int invisibleMeshValue = 1;
-    private int visibleMeshValue = 0;
+    private float invisibleMeshValue = 1;
+    private float visibleMeshValue = 0.01f;
 
     public GameObject Body;
     public GameObject Head;
@@ -73,7 +73,7 @@ public class Boss : MonoBehaviour
         return Vector3.Distance(this.transform.position, hero.transform.position);
     }
 
-    void ChangeDissolveValue(int to)
+    void ChangeDissolveValue(float to)
     {
         dissolveValue = Mathf.MoveTowards(dissolveValue, to, (1 / duration) * Time.deltaTime);
 

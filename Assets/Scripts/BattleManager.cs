@@ -30,7 +30,7 @@ public class BattleManager : MonoBehaviour
     private static int MAX_FRIENDSHIP_VALUE = 100;
     private static int MAX_ROUND_NUMBER = 2;
 
-    private Player playerScript;
+    private BreathManager playerBreathManager;
 
     Audio AudioManager;
     BossSubtitles BossText;
@@ -74,7 +74,7 @@ public class BattleManager : MonoBehaviour
 
         GameObject hero = GameObject.Find("Hero");
         AudioManager = hero.GetComponent<Audio>();
-        playerScript = hero.GetComponent<Player>();
+        playerBreathManager = hero.GetComponent<BreathManager>();
         BossText = GameObject.Find("Subtitle").GetComponent<BossSubtitles>();
 
         friendshipBar.SetMaxValue(MAX_FRIENDSHIP_VALUE);
@@ -293,12 +293,12 @@ public class BattleManager : MonoBehaviour
 
     void checkBlockedButtons()
     {
-        if (!hasBlockedButtons && playerScript.GetBreath() < 10f)
+        if (!hasBlockedButtons && playerBreathManager.GetBreath() < 10f)
         {
             hasBlockedButtons = true;
             changePanelsTransparency(0.5f);
         }
-        if (hasBlockedButtons && playerScript.GetBreath() > 10f)
+        if (hasBlockedButtons && playerBreathManager.GetBreath() > 10f)
         {
             hasBlockedButtons = false;
             changePanelsTransparency(1f);
@@ -338,7 +338,7 @@ public class BattleManager : MonoBehaviour
             
 
             friendshipBar.SetValue(friendshipBar.GetValue() + HeroDialogues[selectedDialogueId].Friendship);
-            playerScript.DecreaseBreath(HeroDialogues[selectedDialogueId].Breath);
+            playerBreathManager.DecreaseBreath(HeroDialogues[selectedDialogueId].Breath);
 
         }
     }

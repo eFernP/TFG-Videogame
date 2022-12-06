@@ -27,7 +27,7 @@ public class BossSubtitles : MonoBehaviour
             Debug.Log(v.Text);
             string[] SplittedText = v.Text.Split(" ");
             float seconds = (float)SplittedText.Length / WPM * 60;
-            yield return new WaitForSeconds(1f + seconds);
+            yield return new WaitForSeconds(1f);
         }
         subtitle.text = null;
         onFinishDialogue();

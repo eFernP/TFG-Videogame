@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.SceneManagement;
 
 public class Player: MonoBehaviour
 {
@@ -40,13 +41,15 @@ public class Player: MonoBehaviour
     public BlackScreen BlackScreenScript;
     private PlayerPoseManager playerPoseManager;
 
-    private bool isTeleporting = false;
+
     private TeleportUnit currentTeleport;
 
     public GameObject[] coveredParts;
     public GameObject[] uncoveredParts;
     public GameObject light;
 
+    private bool isTeleporting = false;
+    private bool isTeleportingToBattle = false;
     private bool isCover = false;
     private bool isInsideMaze = false;
 
@@ -250,8 +253,12 @@ public class Player: MonoBehaviour
             else
             {
                 //TODO: Change also camera rotation/position
-                this.transform.position = currentTeleport.getDestination();
-                this.transform.rotation = Quaternion.Euler(0, currentTeleport.getDestinationOrientation(), 0);
+                if(isTeleportingToBattle){
+                    SceneManager.LoadScene("BattleScene");
+                }else{
+                    this.transform.position = currentTeleport.getDestination();
+                    this.transform.rotation = Quaternion.Euler(0, currentTeleport.getDestinationOrientation(), 0);
+                }
             }
         }
         else
@@ -289,8 +296,15 @@ public class Player: MonoBehaviour
         lifeCounter = LIFE_POINTS;
         animator = GetComponent<Animator>();
         characterController = GetComponent<CharacterController>();
-        boss = GameObject.Find("Boss").GetComponent<Boss>();
+
         playerPoseManager = GetComponent<PlayerPoseManager>();
+
+        Scene currentScene = SceneManager.GetActiveScene();
+
+        if (currentScene.name == "BattleScene")
+        {
+            boss = GameObject.Find("Boss").GetComponent<Boss>();
+        }
     }
 
 
@@ -330,8 +344,6 @@ public class Player: MonoBehaviour
         bool isRunning = animator.GetBool("isRunning");
 
 
-        //checkPose(1, KeyCode.Mouse0); //ONLY WHEN PLAYER UNLOCKS
-        //checkPose(2, KeyCode.Mouse1); //ONLY WHEN PLAYER UNLOCKS
         checkCover();
 
 
@@ -364,7 +376,11 @@ public class Player: MonoBehaviour
         if (collider.gameObject.tag == "Teleport")
         {
             isTeleporting = true;
-            currentTeleport= collider.gameObject.GetComponent<TeleportUnit>();
+            if(collider.gameObject.name == "BossTeleportUnit"){
+                isTeleportingToBattle = true;
+            }else{
+                currentTeleport= collider.gameObject.GetComponent<TeleportUnit>();
+            }
         }
     }
 
@@ -378,10 +394,11 @@ public class Player: MonoBehaviour
                 boss.handleCollision();
             }
 
-            //handleDamage();
+            handleDamage();
 
         }
     }
+
 
 }
 

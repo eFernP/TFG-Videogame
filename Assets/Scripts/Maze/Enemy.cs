@@ -14,11 +14,11 @@ public class Enemy : MonoBehaviour
     private Coroutine co;
 
     private float STOP_TIME = 5f;
-    private float SLOW_SPEED = 10f;
-    private float FAST_SPEED = 20f;
+    private float SLOW_SPEED = 2f;
+    private float FAST_SPEED = 12f;
     private float ROTATION_SPEED = 1000f;
 
-    private float UNCOVERED_PLAYER_DISTANCE = 20f;
+    private float UNCOVERED_PLAYER_DISTANCE = 15f;
     private float COVERED_PLAYER_DISTANCE = 4f;
     private float ATTACK_DISTANCE = 2.5f;
 
@@ -166,7 +166,11 @@ public class Enemy : MonoBehaviour
             {
                 isHunting = true;
                 agent.Stop();
-                StopCoroutine(co);
+                if(co != null)
+                {
+                    StopCoroutine(co);
+                }
+                
                 hasReachedDestination = false;
                 if (!animator.GetBool("isMoving"))
                 {

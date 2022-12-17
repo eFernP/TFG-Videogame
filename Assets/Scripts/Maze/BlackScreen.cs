@@ -18,11 +18,8 @@ public class BlackScreen : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        opacity = 0;
-        {
-            image = this.GetComponent<Image>();
-
-        }
+        image = this.GetComponent<Image>();
+        opacity = image.color.a;
 
     }
 
@@ -38,7 +35,6 @@ public class BlackScreen : MonoBehaviour
         isChanging = true;
         value = 1;
     }
-
 
     public float getOpacity()
     {

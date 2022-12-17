@@ -37,7 +37,7 @@ public class Audio : MonoBehaviour
             Debug.Log(v.Text);
             AudioClip clip = Resources.Load<AudioClip>("Audio/" + v.ClipPath);
             //source.PlayOneShot(clip); UNCOMMENT when clips are ready
-            yield return new WaitForSeconds(1); //Change for clip.length
+            yield return new WaitForSeconds(1); //Change for clip.length when the clip exists
         }
 
     }
@@ -68,9 +68,4 @@ public class Audio : MonoBehaviour
     }
 
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

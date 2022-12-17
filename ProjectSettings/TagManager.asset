@@ -17,6 +17,7 @@ TagManager:
   - Enemy
   - Teleport
   - Decoration
+  - Map
   layers:
   - Default
   - TransparentFX

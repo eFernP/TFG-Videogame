@@ -29,28 +29,28 @@ public class Constants
      {
             new Dictionary<int, HeroDialogue>()
             {
-                {1, new HeroDialogue(1, "No me hagas daño, ¡por favor!", 1, new int[] { 3 }, new int[]{}, 10, 10)},
-                {2, new HeroDialogue(2, "Detente o lo lamentarás.", 2, new int[] { 4 }, new int[]{ }, -10, 10)},
+                {1, new HeroDialogue(1, "No me hagas daÃ±o, Â¡por favor!", 1, new int[] { 3 }, new int[]{}, 10, 10)},
+                {2, new HeroDialogue(2, "Detente o lo lamentarÃ¡s.", 2, new int[] { 4 }, new int[]{ }, -10, 10)},
                 {3, new HeroDialogue(3, "He venido a buscar a alguien.", 4, new int[]{6,7},  new int[]{ }, 5, 10)},
-                {4, new HeroDialogue(4, "¿Sabes acaso quién soy?", 3, new int[]{5,6},  new int[]{ }, -5, 10)},
-                {5, new HeroDialogue(5, "¿Quién eres tú?", 5, new int[]{ },  new int[]{ }, 0, 10)},
-                {6, new HeroDialogue(6, "¿Qué es este lugar?", 6, new int[]{ },  new int[]{ }, 0, 10)},
+                {4, new HeroDialogue(4, "Â¿Sabes acaso quiÃ©n soy?", 3, new int[]{5,6},  new int[]{ }, -5, 10)},
+                {5, new HeroDialogue(5, "Â¿QuiÃ©n eres tÃº?", 5, new int[]{ },  new int[]{ }, 0, 10)},
+                {6, new HeroDialogue(6, "Â¿QuÃ© es este lugar?", 6, new int[]{ },  new int[]{ }, 0, 10)},
                 {7, new HeroDialogue(7, "La gente busca refugio. Hay una guerra terrible.", 7, new int[]{8},  new int[]{ }, 10, 10)},
-                {8, new HeroDialogue(8, "Y te da igual?", 8, new int[]{9},  new int[]{ }, -5, 10)},
+                {8, new HeroDialogue(8, "Â¿Y te da igual?", 8, new int[]{9},  new int[]{ }, -5, 10)},
                 {9, new HeroDialogue(9, "No es mi guerra", 9, new int[]{10,11},  new int[]{ }, 5, 10)},
-                {10, new HeroDialogue(10, "Solo quería proteger a mi familia", 10, new int[]{12},  new int[]{11}, 5, 10)},
-                {11, new HeroDialogue(11, "Era mi deber, pero yo no quería", 10, new int[]{12},  new int[]{10}, 5, 10)},
-                {12, new HeroDialogue(12, "No, ahora solo quiero que acabe", 11, new int[]{},  new int[]{-1}, 10, 10)}, //TODO: Test. Has to remove all the other dialogue options
+                {10, new HeroDialogue(10, "Solo querÃ­a proteger a mi familia", 10, new int[]{12},  new int[]{11}, 5, 10)},
+                {11, new HeroDialogue(11, "Era mi deber, pero yo no querÃ­a", 10, new int[]{12},  new int[]{10}, 5, 10)},
+                {12, new HeroDialogue(12, "No, ahora solo quiero que acabe", 11, new int[]{},  new int[]{-1}, 10, 10)}, 
             },
             new Dictionary<int, HeroDialogue>()
             {
-                {1, new HeroDialogue(1, "Ayúdame entonces.", 3, new int[] { 3,5,7 }, new int[]{}, 5, 10)},
-                {2, new HeroDialogue(2, "¿De qué estás hablando?", 2, new int[] { }, new int[]{ }, 0, 10)},
-                {3, new HeroDialogue(3, "Por favor. No podemos soportarlo más.", 4, new int[]{4},  new int[]{5}, 5, 10)},
-                {4, new HeroDialogue(4, "¡Por favor!", 5, new int[]{6},  new int[]{ }, 5, 10)},
-                {5, new HeroDialogue(5, "Que pese sobre tu conciencia tu decisión.", 5, new int[]{6},  new int[]{3}, -10, 10)},
-                {6, new HeroDialogue(6, "Si no me das una respuesta, tendré que sacártela por la fuerza.", 8, new int[]{},  new int[]{-1}, 5, 10)},//TODO: Test. Has to remove all the other dialogue options
-                {7, new HeroDialogue(7, "¿Qué eres?", 7, new int[]{},  new int[]{ },0, 10)}
+                {1, new HeroDialogue(1, "AyÃºdame entonces.", 3, new int[] { 3,5,7 }, new int[]{}, 5, 10)},
+                {2, new HeroDialogue(2, "Â¿De quÃ© estÃ¡s hablando?", 2, new int[] { }, new int[]{ }, 0, 10)},
+                {3, new HeroDialogue(3, "Por favor. No podemos soportarlo mÃ¡s.", 4, new int[]{4},  new int[]{5}, 5, 10)},
+                {4, new HeroDialogue(4, "Â¡Por favor!", 5, new int[]{6},  new int[]{ }, 5, 10)},
+                {5, new HeroDialogue(5, "Que pese sobre tu conciencia tu decisiï¿½n.", 5, new int[]{6},  new int[]{3}, -10, 10)},
+                {6, new HeroDialogue(6, "Si no me das una respuesta, tendrÃ© que sacÃ¡rtela por la fuerza.", 8, new int[]{},  new int[]{-1}, 5, 10)},
+                {7, new HeroDialogue(7, "Â¿QuÃ© eres?", 7, new int[]{},  new int[]{ },0, 10)}
             }
 
     };
@@ -59,27 +59,27 @@ public class Constants
     {
         new Dictionary<int, BossDialogue>()
         {
-            {1, new BossDialogue(1, new Vocals[]{ new Vocals("testClip", "No debiste entrar aquí.") }) },
-            {2, new BossDialogue(2, new Vocals[]{ new Vocals("testClip", "Eres débil."), new Vocals("testClip", "No eres ninguna amenaza para mí.") }) },
-            {3, new BossDialogue(3, new Vocals[]{ new Vocals("testClip", "Allí fuera eres Irik el Lucero, el Esplendoroso,"), new Vocals("testClip", "el hijo predilecto de un reino que se desmorona."), new Vocals("testClip", "Aquí dentro no eres nadie.") }) },
-            {4, new BossDialogue(4, new Vocals[]{ new Vocals("testClip", "Un intruso más.") }) },
-            {5, new BossDialogue(5, new Vocals[]{ new Vocals("testClip", "El Guardián. El Vigía.") }) },
+            {1, new BossDialogue(1, new Vocals[]{ new Vocals("testClip", "No debiste entrar aquÃ­.") }) },
+            {2, new BossDialogue(2, new Vocals[]{ new Vocals("testClip", "Eres dÃ©bil."), new Vocals("testClip", "No eres ninguna amenaza para mÃ­.") }) },
+            {3, new BossDialogue(3, new Vocals[]{ new Vocals("testClip", "AllÃ­ fuera eres Irik el Lucero, el Esplendoroso,"), new Vocals("testClip", "el hijo predilecto de un reino que se desmorona."), new Vocals("testClip", "AquÃ­ dentro no eres nadie.") }) },
+            {4, new BossDialogue(4, new Vocals[]{ new Vocals("testClip", "Un intruso mÃ¡s.") }) },
+            {5, new BossDialogue(5, new Vocals[]{ new Vocals("testClip", "El GuardiÃ¡n. El VigÃ­a.") }) },
             {6, new BossDialogue(6, new Vocals[]{ new Vocals("testClip", "Eso no te incumbe.") }) },
-            {7, new BossDialogue(7, new Vocals[]{ new Vocals("testClip", "Lo sé."), new Vocals("testClip", "He oído los gritos, he visto los monstruos que cosechan carne."), new Vocals("testClip", "He visto cómo ensamblan esa carne y la convierten en nuevos soldados"), new Vocals("testClip", "que envían a una absurda batalla contra la muerte, siempre vencedora.") }) },
-            {8, new BossDialogue(8, new Vocals[]{ new Vocals("testClip", "Es tu guerra, no la mía.") }) },
-            {9, new BossDialogue(9, new Vocals[]{ new Vocals("testClip", "Mientes. También te he visto a ti, Lucero,"), new Vocals("testClip", "blandiendo una lanza contra los que tú llamas traidores y sus máquinas"), new Vocals("testClip", "Has derramado sangre.") }) },
-            {10, new BossDialogue(10, new Vocals[]{ new Vocals("testClip", "¿No vas a luchar más?") }) },
-            {11, new BossDialogue(11, new Vocals[]{ new Vocals("testClip", "Enséñame de qué eres capaz.") }) },
+            {7, new BossDialogue(7, new Vocals[]{ new Vocals("testClip", "Lo sÃ©."), new Vocals("testClip", "He oÃ­do los gritos, he visto los monstruos que cosechan carne."), new Vocals("testClip", "He visto cï¿½mo ensamblan esa carne y la convierten en nuevos soldados"), new Vocals("testClip", "que envÃ­an a una absurda batalla contra la muerte, siempre vencedora.") }) },
+            {8, new BossDialogue(8, new Vocals[]{ new Vocals("testClip", "Es tu guerra, no la mï¿½a.") }) },
+            {9, new BossDialogue(9, new Vocals[]{ new Vocals("testClip", "Mientes. TambiÃ©n te he visto a ti, Lucero,"), new Vocals("testClip", "blandiendo una lanza contra los que tÃº llamas traidores y sus mÃ¡quinas"), new Vocals("testClip", "Has derramado sangre.") }) },
+            {10, new BossDialogue(10, new Vocals[]{ new Vocals("testClip", "Â¿No vas a luchar mÃ¡s?") }) },
+            {11, new BossDialogue(11, new Vocals[]{ new Vocals("testClip", "EnsÃ©Ã±ame de quÃ© eres capaz.") }) },
         },
         new Dictionary<int, BossDialogue>()
         {
-            {1, new BossDialogue(1, new Vocals[]{ new Vocals("testClip", "Eres osado, pero insignificante."), new Vocals("testClip", "La edad maldita ha llegado y estáis todos condenados.") }) },
-            {2, new BossDialogue(2, new Vocals[]{ new Vocals("testClip", "Del final del tiempo, de un instante sin fin. "), new Vocals("testClip", "Los falsos dioses manipularon el hilo y terminaron enredándolo.") }) },
+            {1, new BossDialogue(1, new Vocals[]{ new Vocals("testClip", "Eres osado, pero insignificante."), new Vocals("testClip", "La edad maldita ha llegado y estÃ¡is todos condenados.") }) },
+            {2, new BossDialogue(2, new Vocals[]{ new Vocals("testClip", "Del final del tiempo, de un instante sin fin. "), new Vocals("testClip", "Los falsos dioses manipularon el hilo y terminaron enredÃ¡ndolo.") }) },
             {3, new BossDialogue(3, new Vocals[]{ new Vocals("testClip", "No voy a ayudarte, no debo intervenir.") }) },
             {4, new BossDialogue(4, new Vocals[]{ new Vocals("testClip", "...") }) },
-            {5, new BossDialogue(5, new Vocals[]{ new Vocals("testClip", "¡Cállate!") }) },
+            {5, new BossDialogue(5, new Vocals[]{ new Vocals("testClip", "Â¡CÃ¡llate!") }) },
             {6, new BossDialogue(6, new Vocals[]{ new Vocals("testClip", "Insolente.") }) },
-            {7, new BossDialogue(7, new Vocals[]{ new Vocals("testClip", "Algo que no podrías comprender."), new Vocals("testClip", "Un ser que no se rige por las leyes de tu mundo.") }) },
+            {7, new BossDialogue(7, new Vocals[]{ new Vocals("testClip", "Algo que no podrÃ­as comprender."), new Vocals("testClip", "Un ser que no se rige por las leyes de tu mundo.") }) },
             {8, new BossDialogue(8, new Vocals[]{ new Vocals("testClip", "Adelante, te espero.") }) },
         }
     };
@@ -87,5 +87,10 @@ public class Constants
     public static Vocals[][] LastBattleDialogues = new Vocals[][]
     {
         new Vocals[]{ new Vocals("testClip", "He tenido suficiente.") }
+    };
+
+    public static Vocals[][] MazeDialogues = new Vocals[][]
+    {
+        new Vocals[]{ new Vocals("testClip", "Ya has merodeado suficiente, intruso."), new Vocals("testClip", "Ven a dar la cara y te darÃ© la oportunidad de explicarte.") }
     };
 }

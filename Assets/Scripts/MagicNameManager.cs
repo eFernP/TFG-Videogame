@@ -4,17 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class MagicNameManager : MonoBehaviour
+public class MagicNameManager : InteractiveObject
 {
 
     private string type = Constants.STONE_TYPE; //TODO: Set after instantiate object
 
-    GameObject hero;
-    GameObject initialText;
+    //GameObject hero;
+    //GameObject initialText;
     GameObject sprites;
     Audio AudioManager;
 
-    private bool hasVisibleText = false;
+    //private bool hasVisibleText = false;
     private bool hasVisibleSprite = false;
 
     private static int MAX_HERO_DISTANCE = 5;
@@ -22,8 +22,6 @@ public class MagicNameManager : MonoBehaviour
 
     private string[] MagicName = new string[NAME_LENGTH];
     private Sprite[] NameSprites = new Sprite[NAME_LENGTH];
-
-    public Sprite[] graphemeSprites;
 
     private MagicNamesStack Names;
     private Player playerManager;
@@ -35,27 +33,17 @@ public class MagicNameManager : MonoBehaviour
 
     private bool isFalling = true;
 
-    //private Dictionary<string, Sprite> SyllableSprites = new Dictionary<string, Sprite>()
-    // {
-    //        {Constants.SYLLABLES[0], graphemeSprites[0]},
-    //        {Constants.SYLLABLES[1], graphemeSprites[1]},
-    //        {Constants.SYLLABLES[2], graphemeSprites[2]},
-    //        {Constants.SYLLABLES[3], graphemeSprites[3]},
-    //        {Constants.SYLLABLES[4], graphemeSprites[4]},
-    //        {Constants.SYLLABLES[5], graphemeSprites[5]},
-    // };
-
 
     // Start is called before the first frame update
-    void Start()
+    public override void Start()
     {
+        base.Start();
         PlayerVoiceManager.onUseMagic += onUseMagic;
-        hero = GameObject.Find("Hero");
-        playerManager = hero.GetComponent<Player>();
-        playerVoiceManager = hero.GetComponent<PlayerVoiceManager>();
-        playerPoseManager = hero.GetComponent<PlayerPoseManager>();
-        AudioManager = hero.GetComponent<Audio>();
-        initialText = this.transform.GetChild(0).gameObject;
+        //hero = GameObject.Find("Hero");
+        playerManager = base.hero.GetComponent<Player>();
+        playerVoiceManager = base.hero.GetComponent<PlayerVoiceManager>();
+        playerPoseManager = base.hero.GetComponent<PlayerPoseManager>();
+        AudioManager = base.hero.GetComponent<Audio>();
         sprites = this.transform.GetChild(1).gameObject;
         GetMagicName();
         GetMagicNameSprites();
@@ -70,9 +58,6 @@ public class MagicNameManager : MonoBehaviour
         MagicName = StoneName.Split('_');
 
         this.name = type + "_" + StoneName;
-        //Debug.Log("MAGIC NAME:" + MagicName[0] + MagicName[1] + MagicName[2]);
-        //Debug.Log(Constants.GetStoneName());
-        //Debug.Log(Constants.GetStoneName());
     }
 
 
@@ -80,49 +65,31 @@ public class MagicNameManager : MonoBehaviour
     {
         for(int i=0; i< NAME_LENGTH; i++)
         {
-            //NameAudioClips[i] = Resources.Load<AudioClip>("Audio/Syllable_" + MagicName[i]);
-            //NameSprites[i] = AssetDatabase.LoadAssetAtPath("Assets/UI/Sprites/Syllable_" + MagicName[i], typeof(Sprite)) as Sprite; NOT WORKING
-
-            NameSprites[i] = Array.Find(graphemeSprites, element => element.name == "Syllable_"+MagicName[i]);
+            NameSprites[i] = Resources.Load<Sprite>("Sprites/Syllable_" + MagicName[i]);
         }
     }
 
 
-    void toggleText(bool value)
-    {
-        MeshRenderer textMesh = initialText.GetComponent<MeshRenderer>();
-        textMesh.enabled = value;
-    }
-
-
-    void checkText()
-    {
-        float heroDistance = Vector3.Distance(this.transform.position, hero.transform.position);
-        if (!hasVisibleText && (heroDistance < MAX_HERO_DISTANCE || !hasVisibleSprite))
-        {
-            hasVisibleText = true;
-            toggleText(true);
-        }
-        if (hasVisibleText && (heroDistance >= MAX_HERO_DISTANCE || hasVisibleSprite))
-        {
-            hasVisibleText = false;
-            toggleText(false);
-        }
-    }
-
-    //public IEnumerator ShowSyllableSprites()
+    //void toggleText(bool value)
     //{
-    //    hasVisibleSprite = true;
-    //    hasVisibleText = false;
-    //    for (int i = 0; i < NAME_LENGTH; i++)
+    //    MeshRenderer textMesh = initialText.GetComponent<MeshRenderer>();
+    //    textMesh.enabled = value;
+    //}
+
+
+    //void checkText(bool otherConditions)
+    //{
+    //    float heroDistance = Vector3.Distance(this.transform.position, hero.transform.position);
+    //    if (!hasVisibleText && (heroDistance < MAX_HERO_DISTANCE || !hasVisibleSprite)) 
     //    {
-    //        SpriteRenderer rend = syllableSprite.GetComponent<SpriteRenderer>();
-    //        rend.sprite = NameSprites[i];
-    //        yield return new WaitForSeconds(NameAudioClips[i].length);
+    //        hasVisibleText = true;
+    //        toggleText(true);
     //    }
-    //    syllableSprite.GetComponent<SpriteRenderer>().sprite = null;
-    //    hasVisibleSprite = false;
-    //    hasVisibleText = true;
+    //    if (hasVisibleText && (heroDistance >= MAX_HERO_DISTANCE || hasVisibleSprite))
+    //    {
+    //        hasVisibleText = false;
+    //        toggleText(false);
+    //    }
     //}
 
 
@@ -152,7 +119,7 @@ public class MagicNameManager : MonoBehaviour
     {
         Rigidbody rb = this.GetComponent<Rigidbody>();
         //rb.AddForce(this.transform.forward * 30+this.transform.up*1, ForceMode.Impulse);
-        rb.AddForce(hero.transform.up * UP_FORCE + hero.transform.forward * FORWARD_FORCE, ForceMode.Impulse);
+        rb.AddForce(base.hero.transform.up * UP_FORCE + base.hero.transform.forward * FORWARD_FORCE, ForceMode.Impulse);
     }
 
     void onUseMagic()
@@ -174,18 +141,18 @@ public class MagicNameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        checkText();
+        base.checkText(!hasVisibleSprite, hasVisibleSprite);
 
-        if (hasVisibleText && Input.GetKeyUp(KeyCode.Space))
+        if (base.hasVisibleText && Input.GetKeyUp(KeyCode.Space))
         {
-            //StartCoroutine(AudioManager.PlayMagicName(NameAudioClips));
             StartCoroutine(ShowSyllableSprites());
         }
 
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            Impulse();
-        }
+        //UNCOMMENT TO TEST FASTER
+        //if (Input.GetKeyDown(KeyCode.B))
+        //{
+        //    Impulse();
+        //}
 
     }
 

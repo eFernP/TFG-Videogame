@@ -300,7 +300,7 @@ public class MazePlayer : MonoBehaviour
 
     void FinishGame()
     {
-        //RestartMenuUI.SetActive(true); //UNCOMMENT
+        RestartMenuUI.SetActive(true);
         Time.timeScale = 0f;
     }
 

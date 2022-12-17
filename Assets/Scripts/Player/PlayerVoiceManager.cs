@@ -16,7 +16,6 @@ public class PlayerVoiceManager : MonoBehaviour
     private float SECONDS_BETWEEN_SYLLABLES = 0.1f;
 
     private AudioClip[] NameAudioClips = new AudioClip[NAME_LENGTH];
-    public Sprite[] testSprites;
     private SpriteRenderer GraphemeRenderer;
 
     public delegate void UseMagic();
@@ -52,7 +51,8 @@ public class PlayerVoiceManager : MonoBehaviour
         foreach (KeyValuePair<KeyCode, string> syllable in MagicSyllables)
         {
             AudioClip clip = Resources.Load<AudioClip>("Audio/Syllable_" + syllable.Value);
-            MagicNameFiles.Add(syllable.Key, new MagicSyllable(syllable.Value, clip, testSprites[index]));
+            Sprite grapheme = Resources.Load<Sprite>("Sprites/Syllable_" + syllable.Value);
+            MagicNameFiles.Add(syllable.Key, new MagicSyllable(syllable.Value, clip, grapheme));
             index++;
         }
 

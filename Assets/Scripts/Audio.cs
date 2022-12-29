@@ -22,7 +22,7 @@ public class Audio : MonoBehaviour
         if (!isHeroSoundActive)
         {
             isHeroSoundActive = true;
-            source.PlayOneShot(clip);
+            PlaySound(clip);
             yield return new WaitForSeconds(waitTime);
             isHeroSoundActive = false;
         }
@@ -66,6 +66,22 @@ public class Audio : MonoBehaviour
     {
         source = gameObject.AddComponent<AudioSource>();
     }
+
+
+    //void Update()
+    //{
+    //    if (Time.timeScale == 0f && source.isPlaying)
+    //    {
+    //        source.Pause();
+    //        return;
+    //    }
+
+    //    if (Time.timeScale != 0f && !source.isPlaying)
+    //    {
+    //        source.Play();
+    //    }
+        
+    //}
 
 
 }

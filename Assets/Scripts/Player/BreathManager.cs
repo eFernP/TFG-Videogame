@@ -45,7 +45,7 @@ public class BreathManager : MonoBehaviour
         float breathValue = breathBar.GetValue();
 
 
-        if (playerManager.IsMoving && !playerPoseManager.isPosing())
+        if (playerManager.IsMoving && !playerPoseManager.isPosing() && !playerManager.IsInStealth)
         {
 
             if (breathValue > 0)

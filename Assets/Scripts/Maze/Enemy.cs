@@ -18,8 +18,9 @@ public class Enemy : MonoBehaviour
     private float FAST_SPEED = 12f;
     private float ROTATION_SPEED = 1000f;
 
-    private float UNCOVERED_PLAYER_DISTANCE = 15f;
-    private float COVERED_PLAYER_DISTANCE = 4f;
+    private float UNCOVERED_PLAYER_DISTANCE = 20f;
+    private float COVERED_PLAYER_DISTANCE = 6f;
+    private float STEALTH_PLAYER_DISTANCE = 3f;
     private float ATTACK_DISTANCE = 2.5f;
 
     private GameObject Player;
@@ -29,12 +30,17 @@ public class Enemy : MonoBehaviour
     private bool hasReachedDestination = false;
 
 
+    private AudioSource audioSource;
+    public AudioClip attackClip;
+    public AudioClip huntClip;
+    public AudioClip defaultClip;
 
     // Start is called before the first frame update
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
         Player = GameObject.FindGameObjectsWithTag("Player")[0];
         agent.speed = SLOW_SPEED;
     }
@@ -66,6 +72,21 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    void PlaySound(AudioClip clip, bool isOneShot = false)
+    {
+        Debug.Log("CLIPP??" + clip);
+        if (isOneShot)
+        {
+            audioSource.PlayOneShot(clip);
+        }
+        else
+        {
+            audioSource.clip = clip;
+            audioSource.Play();
+        }
+        
+    }
+
     float getHeroPosition()
     {
         return Vector3.Distance(this.transform.position, Player.transform.position);
@@ -94,70 +115,66 @@ public class Enemy : MonoBehaviour
         animator.SetBool("isAttacking", false);
         foundPlayer = false;
         isHunting = false;
+       
         
             
        if(getHeroPosition() >= ATTACK_DISTANCE)
         {
             agent.Resume();
             agent.SetDestination(destination);
+            PlaySound(defaultClip);
+        }
+        else
+        {
+            PlaySound(huntClip);
         }
 
     }
 
     void huntPlayer()
     {
-        //if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
-        //{
-        //    Debug.Log("FINISH HUNT");
-        //    foundPlayer = false;
-        //    isHunting = false;
-        //    agent.speed = SLOW_SPEED;
-        //    animator.SetBool("isMoving", true);
-        //    agent.Resume();
-        //    agent.SetDestination(destination);
-
-        //    return;
-        //}
-
         if (getHeroPosition() < ATTACK_DISTANCE && !foundPlayer)
         {
             foundPlayer = true;
             animator.SetBool("isAttacking", true);
-            //agent.Stop();
+            //PlaySound(attackClip, true);
         }
 
         if (!foundPlayer)
         {
-            //agent.SetDestination(Player.transform.position);
             this.transform.Translate(Vector3.forward * FAST_SPEED * Time.deltaTime);
         }
 
         Quaternion rotation = Quaternion.LookRotation(Player.transform.position - this.transform.position);
         this.transform.rotation = Quaternion.RotateTowards(this.transform.rotation, rotation, ROTATION_SPEED * Time.deltaTime);
-
-
-        //Debug.Log(animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
-        //Debug.Log("attacking" + animator.GetBool("isAttacking"));
-        //Debug.Log("moving" + animator.GetBool("isMoving"));
-        //Debug.Log("transition??" + animator.IsInTransition(0));
-        //if (animator.GetBool("isAttacking") && hasAnimationFinished())
-        //{
-        //    Debug.Log("FINISH ANIMATION");
-        //    isHunting = false;
-        //    agent.speed = SLOW_SPEED;
-        //    this.gameObject.SetActive(false);
-        //    //animator.SetBool("isAttacking", false);
-        //    //animator.SetBool("isMoving", true);
-        //}
-
     }
 
-    void checkHunt()//TODO: Check player also if has light turned on
+    float getDetectionDistance()
     {
         bool isPlayerCovered = Player.GetComponent<Player>().getIsCovered();
-        float playerDistance = isPlayerCovered ? COVERED_PLAYER_DISTANCE : UNCOVERED_PLAYER_DISTANCE;
+        bool isPlayerInStealth = Player.GetComponent<Player>().IsInStealth;
 
-        if(!isHunting && !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && getHeroPosition() < playerDistance)
+        if (isPlayerCovered && isPlayerInStealth)
+        {
+            return STEALTH_PLAYER_DISTANCE;
+
+        }
+        else if (isPlayerCovered)
+        {
+            return COVERED_PLAYER_DISTANCE;
+        }
+        else
+        {
+            return UNCOVERED_PLAYER_DISTANCE;
+        }
+    }
+
+    void checkHunt()
+    {
+
+        float detectionDistance = getDetectionDistance();
+
+        if(!isHunting && !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && getHeroPosition() < detectionDistance)
         {
             RaycastHit hit;
             bool hasObstacle = Physics.Linecast(this.transform.position, Player.transform.position, out hit);
@@ -176,6 +193,7 @@ public class Enemy : MonoBehaviour
                 {
                     animator.SetBool("isMoving", true);
                 }
+                PlaySound(huntClip);
             }
         }
     }
@@ -184,6 +202,19 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         if (destination == null) return;
+
+        if (Time.timeScale == 0f)
+        {
+            audioSource.Pause();
+            return;
+        }
+        else
+        {
+            if (!audioSource.isPlaying)
+            {
+                audioSource.Play();
+            }
+        }
 
         checkHunt();
 

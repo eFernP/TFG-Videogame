@@ -10,6 +10,7 @@ public class Boss : MonoBehaviour
     public AudioClip slash;
     public AudioClip specialSlash;
     public AudioClip swoosh;
+    public AudioClip stoneImpact;
 
     private GameObject hero;
     public float duration;
@@ -420,7 +421,7 @@ public class Boss : MonoBehaviour
         if(other == "Stone" && BattleScript.GetCurrentPhase() == 2)
         {
             friendshipBar.SetValue(friendshipBar.GetValue() + (float)STONE_COLLISION_POINTS);
-
+            AudioManager.PlaySound(stoneImpact);
             //FOR TESTING
             //if(roundForTesting == 2)
             //{

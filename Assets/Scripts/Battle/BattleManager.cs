@@ -96,6 +96,8 @@ public class BattleManager : MonoBehaviour
         hasBattleStarted = false;
         isDialogueActive = false;
 
+        SaveSystem.SaveGame("BattleScene", true, Constants.SavePositions[2]);
+
         //instantiatePanel(3);
         //addDialogue(3, 3);
         //instantiatePanel(4);
@@ -364,7 +366,7 @@ public class BattleManager : MonoBehaviour
         }
         if(!isSceneReady && BlackScreenScript.getOpacity() == 0)
         {
-            InformationMessage.show("Controles", "-     Presiona un número del 1 al 5 para pronunciar una sílaba.\n\n-     Mantén pulsado el botón izquierdo del ratón para usar Impulso.");
+            InformationMessage.show("Controles", "-     Presiona un nï¿½mero del 1 al 5 para pronunciar una sï¿½laba.\n\n-     Mantï¿½n pulsado el botï¿½n izquierdo del ratï¿½n para usar Impulso.");
             isSceneReady = true;
         }
 
@@ -400,6 +402,17 @@ public class BattleManager : MonoBehaviour
             }
 
         }
+
+        //TO TEST
+        //if (Input.GetKeyUp(KeyCode.P))
+        //{
+        //    currentPhase = 1;
+        //    BossDialogues = Constants.BossDialogues[RoundNumber];
+        //    HeroDialogues = Constants.HeroDialogues[RoundNumber];
+        //    RoundNumber++;
+        //    selectedPanel = -1;
+        //    startBossDialogue(BossDialogues[1].Messages);
+        //}
 
     }
 

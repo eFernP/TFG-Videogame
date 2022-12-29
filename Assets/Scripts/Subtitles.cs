@@ -27,7 +27,7 @@ public class Subtitles : MonoBehaviour
             Debug.Log(v.Text);
             string[] SplittedText = v.Text.Split(" ");
             float seconds = (float)SplittedText.Length / WPM * 60;
-            yield return new WaitForSeconds(0.5f + seconds);
+            yield return new WaitForSeconds(0.5f);
         }
         subtitle.text = null;
         onFinishDialogue();

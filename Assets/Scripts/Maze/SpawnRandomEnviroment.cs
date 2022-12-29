@@ -27,13 +27,17 @@ public class SpawnRandomEnviroment : MonoBehaviour
     public GameObject Enemy;
     public GameObject Key;
     public Player PlayerManager;
+    public InventoryManager PlayerInventory;
+    public Audio AudioManager;
 
     public TeleportUnit EntranceTeleport;
     public TeleportUnit ArchivesTeleport;
 
+    public AudioClip mazeChangeClip;
+
     private static float SCALE = 0.8f;
     private float FLOOR_SIZE = 10 * SCALE;
-    private int UI_FLOOR_SIZE = 25;
+    private int UI_FLOOR_SIZE = 20;
     private int MAX_DOORS_FOR_ROOM = 3;
     private int MAX_PATH = 3;
     private int MAX_DOORS = 50;
@@ -59,8 +63,15 @@ public class SpawnRandomEnviroment : MonoBehaviour
 
     private bool isMazeActive = false;
     private bool isBossRoomUnlocked = false;
+    private bool isFirstTime = true;
 
     private GameObject[] availableUnits;
+
+
+    public bool hasBossRoom()
+    {
+        return isBossRoomUnlocked;
+    }
     
 
     string getOppositeCardinalPoint(string cardinalPoint)
@@ -326,7 +337,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
             float WallZPosition = getWallZPosition(edgeName, FLOOR_SIZE);
             int WallRotation = getWallRotation(edgeName);
 
-            GameObject UnitWall = Instantiate(isDoor ? Door : Wall, new Vector3(WallXPosition + FLOOR_SIZE * x, -2 * SCALE, WallZPosition + FLOOR_SIZE * z), Quaternion.Euler(90, WallRotation, 0), UnitInstance.transform);
+            GameObject UnitWall = Instantiate(isDoor ? Door : Wall, new Vector3(WallXPosition + FLOOR_SIZE * x, isDoor? (-2 * SCALE) :(10 * SCALE), WallZPosition + FLOOR_SIZE * z), Quaternion.Euler(90, WallRotation, 0), UnitInstance.transform);
             var unitRenderer = UnitWall.GetComponent<Renderer>();
             //unitRenderer.material.SetColor("_BaseColor", roomColor);
 
@@ -533,7 +544,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
     GameObject ReplaceDoorForWall(GameObject door, string edgeName)
     {
         door.transform.parent.gameObject.GetComponent<RandomEnviromentUnit>().setEdge(RandomEdgeType.Wall, edgeName);
-        GameObject wall = Instantiate(Wall, door.transform.position, door.transform.rotation, door.transform.parent.transform);
+        GameObject wall = Instantiate(Wall, new Vector3(door.transform.position.x, 10 * SCALE, door.transform.position.z), door.transform.rotation, door.transform.parent.transform);
         Destroy(door);
 
         wall.name = "Wall_" + edgeName;
@@ -596,7 +607,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
         int[] adjacentPosition = findAdjacentPosition(edgeName, coordinates[0], coordinates[1]);
         ParentScript.setEdge(RandomEdgeType.Door, edgeName);
 
-        GameObject door = Instantiate(Door, wall.transform.position, wall.transform.rotation, wall.transform.parent.transform);
+        GameObject door = Instantiate(Door, new Vector3(wall.transform.position.x, -2 * SCALE, wall.transform.position.z), wall.transform.rotation, wall.transform.parent.transform);
 
         int rotation = getUnitRotation(edgeName);
 
@@ -655,15 +666,20 @@ public class SpawnRandomEnviroment : MonoBehaviour
     bool createSpecialRoomDoors()
     {
 
-        List<WeightedUnit> WeightedUnits = new List<WeightedUnit>();
-        WeightedUnits = getExteriorWeightedUnits();
-        entranceUnit = WeightedUnits.Aggregate((i1, i2) => i1.weight > i2.weight ? i1 : i2).unit;
+        List<WeightedUnit> WeightedUnits = getExteriorWeightedUnits();
+
+        WeightedUnit entranceWeightedUnit = WeightedUnits.Aggregate((i1, i2) => i1.weight > i2.weight ? i1 : i2);
+        entranceUnit = entranceWeightedUnit.unit;
+        WeightedUnits.Remove(entranceWeightedUnit);
 
         bool isValidMaze = removeUnreachableUnits();
         if(isValidMaze){
             WeightedUnits.RemoveAll(item => item.unit == null);
 
-            archivesUnit = WeightedUnits.Aggregate((i1, i2) => i1.weight < i2.weight ? i1 : i2).unit;
+            WeightedUnit archivesWeightedUnit = WeightedUnits.Aggregate((i1, i2) => i1.weight < i2.weight ? i1 : i2);
+            archivesUnit = archivesWeightedUnit.unit;
+            WeightedUnits.Remove(archivesWeightedUnit);
+
             battleUnit = WeightedUnits.Aggregate((i1, i2) => Mathf.Abs(i1.weight) < Mathf.Abs(i2.weight) ? i1 : i2).unit;
 
             createSpecialDoor(entranceUnit, 0, EntranceTeleport);
@@ -719,11 +735,11 @@ public class SpawnRandomEnviroment : MonoBehaviour
         }
         if (edge == "east")
         {
-            return new int[] { coordinates[0]-1, coordinates[1]};
+            return new int[] { coordinates[0]+1, coordinates[1]};
         }
         else
         {
-            return new int[] { coordinates[0]+1, coordinates[1]};
+            return new int[] { coordinates[0]-1, coordinates[1]};
         }
     }
 
@@ -860,9 +876,12 @@ public class SpawnRandomEnviroment : MonoBehaviour
     }
 
     void spawnKey(){
-        int randomPosition = Random.Range(0, availableUnits.Length);
-        GameObject unit = availableUnits[randomPosition];
-        Instantiate(Key, new Vector3(unit.transform.position.x, 0f, unit.transform.position.z), Quaternion.identity, this.transform);
+        if (!PlayerInventory.hasObject("Key"))
+        {
+            int randomPosition = Random.Range(0, availableUnits.Length);
+            GameObject unit = availableUnits[randomPosition];
+            Instantiate(Key, new Vector3(unit.transform.position.x, 0f, unit.transform.position.z), Quaternion.identity, this.transform);
+        }
     }
 
 
@@ -889,20 +908,39 @@ public class SpawnRandomEnviroment : MonoBehaviour
     }
 
     public void addBossRoom(){
-        //CHECK PATH AVAILABLE
+        SaveSystem.SaveGame("MazeScene", true, Constants.SavePositions[1]);
         isBossRoomUnlocked = true;
         createSpecialDoor(battleUnit, 2);
         removeChilds(Map.transform);
         generateMap();
     }
 
+
+    void handleSound()
+    {
+        if (!isFirstTime)
+        {
+            AudioManager.PlaySound(mazeChangeClip);
+        }
+        else
+        {
+            isFirstTime = false;
+        }
+    }
+
     void Start()
     {
+        SaveData saveData = SaveSystem.LoadGame();
+        if(saveData != null){
+            isBossRoomUnlocked = saveData.IsBossUnlocked;
+        }
+        
         spawnMaze();
         if (isMazeActive)
         {
             spawnEnemies();
             spawnKey();
+            handleSound();
         }
 
 
@@ -915,10 +953,12 @@ public class SpawnRandomEnviroment : MonoBehaviour
             spawnMaze();
             if (isMazeActive)
             {
+                
                 spawnEnemies();
                 spawnKey();
                 this.GetComponent<Timer>().resetTimer();
                 emergencyCounter = 0;
+                handleSound();
             }
             
         }

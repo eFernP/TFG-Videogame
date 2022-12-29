@@ -8,7 +8,6 @@ TagManager:
   - Pointer
   - GlobalConstants
   - Stone
-  - Projectile
   - SceneManager
   - IgnorePlayerCollisions
   - Door
@@ -18,6 +17,7 @@ TagManager:
   - Teleport
   - Decoration
   - Map
+  - MagicDamage
   layers:
   - Default
   - TransparentFX

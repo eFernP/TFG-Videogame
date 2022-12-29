@@ -8,11 +8,13 @@ public class BattleSpawn : MonoBehaviour
     public GameObject floor;
     private float[] FloorSize = new float[2];
 
-    public GameObject Projectile;
+    public GameObject Attack;
     public GameObject Stone;
 
 
     public static int MAX_STONE_NUMBER = 5;
+    public static int MAX_PROJECTILES_NUMBER = 30;
+    private int projectilesCounter = 0;
 
     private List<GameObject> currentStones = new List<GameObject>(MAX_STONE_NUMBER);
 
@@ -36,12 +38,12 @@ public class BattleSpawn : MonoBehaviour
 
     Vector3 getRandomPosition(float margin)
     {
-        return new Vector3(Random.Range(this.transform.position.x - FloorSize[0]/2 + margin, this.transform.position.x + FloorSize[0] / 2 - margin), 40f, Random.Range(this.transform.position.z - FloorSize[1] / 2 +margin, this.transform.position.z + FloorSize[1] / 2-margin));
+        return new Vector3(Random.Range(this.transform.position.x - FloorSize[0]/2 + margin, this.transform.position.x + FloorSize[0] / 2 - margin), 20f, Random.Range(this.transform.position.z - FloorSize[1] / 2 +margin, this.transform.position.z + FloorSize[1] / 2-margin));
     }
 
     void SpawnProjectile()
     {
-        Instantiate(Projectile, getRandomPosition(0f), Quaternion.identity);
+        Instantiate(Attack, getRandomPosition(0f), Quaternion.identity);
     }
 
     void SpawnStone()
@@ -52,13 +54,14 @@ public class BattleSpawn : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(BattleScript.GetCurrentPhase() == 2)
+        if (BattleScript.GetCurrentPhase() == 2)
         {
             SpawnTimer -= Time.deltaTime;
             SpawnStoneTimer -= Time.deltaTime;
-            if (SpawnTimer <= 0)
+            if (SpawnTimer <= 0 && projectilesCounter < MAX_PROJECTILES_NUMBER)
             {
                 SpawnProjectile();
+                projectilesCounter++;
                 SpawnTimer = SPAWN_TIME;
             }
 
@@ -68,11 +71,23 @@ public class BattleSpawn : MonoBehaviour
                 currentStones.RemoveAll(item => item == null);
                 if (currentStones.Count < MAX_STONE_NUMBER)
                 {
-                    Debug.Log("SPAWN STONE");
                     SpawnStone();
                     SpawnStoneTimer = Random.Range(SPAWN_TIME * 10, SPAWN_TIME * 20);
                 }
             }
+        }
+        else
+        {
+            if(projectilesCounter > 0)
+            {
+                GameObject[] projectiles = GameObject.FindGameObjectsWithTag("MagicDamage");
+                foreach (GameObject p in projectiles)
+                {
+                    Destroy(p);
+                }
+                projectilesCounter = 0;
+            }
+
         }
 
     }

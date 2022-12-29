@@ -13,6 +13,9 @@ public class Player: MonoBehaviour
 
     public Timer mazeTimer;
 
+    public AudioClip mazeDeathClip;
+    public AudioClip biteClip;
+
     private Animator animator;
     private CharacterController characterController;
 
@@ -28,6 +31,7 @@ public class Player: MonoBehaviour
 
     private float SPEED = 11f;
     private float SLOW_SPEED = 8f;
+    private float STEALTH_SPEED = 4f;
     private float GRAVITY = 9.8f;
 
     private float verticalSpeed = 0;
@@ -40,24 +44,36 @@ public class Player: MonoBehaviour
 
     public BlackScreen BlackScreenScript;
     private PlayerPoseManager playerPoseManager;
-
+    private Audio audioManager;
 
     private TeleportUnit currentTeleport;
 
     public GameObject[] coveredParts;
     public GameObject[] uncoveredParts;
+    public GameObject originalHead;
+    public GameObject modifiedHead;
     public GameObject light;
 
     private bool isTeleporting = false;
     private bool isTeleportingToBattle = false;
     private bool isCover = false;
     private bool isInsideMaze = false;
+    private bool isInStealth = false;
+    private bool isDyingByMaze = false;
 
     public bool IsMoving
     {
         get
         {
             return isPressingMovementKey();
+        }
+    }
+
+    public bool IsInStealth
+    {
+        get
+        {
+            return isInStealth;
         }
     }
 
@@ -211,6 +227,14 @@ public class Player: MonoBehaviour
         }
     }
 
+
+    void checkStealth(){
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
+            isInStealth = !isInStealth;
+        }
+    }
+
     public bool getIsCovered()
     {
         return isCover;
@@ -227,9 +251,18 @@ public class Player: MonoBehaviour
         }
     }
 
+    public void changeEye()
+    {
+        toggleMesh(originalHead, false);
+        toggleMesh(modifiedHead, true);
+    }
+
+
 
     void handleMazeDeath()
     {
+        if (!isDyingByMaze) return;
+
         if (BlackScreenScript.getOpacity() < 1)
         {
             BlackScreenScript.fadeOut();
@@ -298,6 +331,7 @@ public class Player: MonoBehaviour
         characterController = GetComponent<CharacterController>();
 
         playerPoseManager = GetComponent<PlayerPoseManager>();
+        audioManager = GetComponent<Audio>();
 
         Scene currentScene = SceneManager.GetActiveScene();
 
@@ -305,6 +339,13 @@ public class Player: MonoBehaviour
         {
             boss = GameObject.Find("Boss").GetComponent<Boss>();
         }
+
+        SaveData saveData = SaveSystem.LoadGame();
+
+        if(saveData != null){
+            this.transform.position = new Vector3(saveData.Position[0], saveData.Position[1], saveData.Position[2]);
+        }
+
     }
 
 
@@ -312,10 +353,13 @@ public class Player: MonoBehaviour
     void Update()
     {
 
-        if (mazeTimer != null && mazeTimer.hasEnded() && isInsideMaze)
+        if (mazeTimer != null && mazeTimer.hasEnded() && isInsideMaze && !isDyingByMaze)
         {
-            handleMazeDeath();
+            isDyingByMaze = true;
+            audioManager.PlaySound(mazeDeathClip);
         }
+
+        handleMazeDeath();
 
         if (lifeCounter == 0)
         {
@@ -343,18 +387,36 @@ public class Player: MonoBehaviour
         bool isMoving = isPressingMovementKey();
         bool isRunning = animator.GetBool("isRunning");
 
-
         checkCover();
+
+        checkStealth();
 
 
         Vector3 movementDirection = Vector3.zero;
 
         if (isPressingMovementKey() && (playerPoseManager == null || !playerPoseManager.isPosing()))
         {
-            if (!isRunning)
+
+            if(isInStealth && isRunning){
+                animator.SetBool("isRunning", false);
+            }
+
+            if(isInStealth && !animator.GetBool("isInStealth")){
+                animator.SetBool("isInStealth", true);
+                speed = STEALTH_SPEED;
+            }
+
+            if(!isInStealth && animator.GetBool("isInStealth")){
+                animator.SetBool("isInStealth", false);
+                speed = STEALTH_SPEED;
+            }
+
+            if (!isInStealth && !isRunning)
             {
                 animator.SetBool("isRunning", true);
+                speed = SPEED;
             }
+
             movementDirection = getForwardVelocity();
         }
         else
@@ -364,6 +426,15 @@ public class Player: MonoBehaviour
                 animator.SetBool("isRunning", false);
             }
 
+            if (animator.GetBool("isInStealth"))
+            {
+                animator.SetBool("isInStealth", false);
+                speed = SPEED;
+            }
+            // if(animator.GetBool("isInStealth")){
+            //     animator.SetBool("isInStealth", false);
+            //     speed = SPEED;
+            // };
         }
 
         move(movementDirection);
@@ -382,11 +453,15 @@ public class Player: MonoBehaviour
                 currentTeleport= collider.gameObject.GetComponent<TeleportUnit>();
             }
         }
+        if (collider.gameObject.tag == "Enemy")
+        {
+            audioManager.PlaySound(biteClip);
+        }
     }
 
     void OnTriggerStay(Collider collider)
     {
-        if (collider.gameObject.tag == "Projectile" || collider.gameObject.tag == "Enemy" || (collider.name == "Boss" && battleManager.GetCurrentPhase() == 1))
+        if (collider.gameObject.tag == "MagicDamage" || collider.gameObject.tag == "Enemy" || (collider.name == "Boss" && battleManager.GetCurrentPhase() == 1))
         {
 
             if (collider.name == "Boss" && !isInvulnerable)
@@ -395,7 +470,6 @@ public class Player: MonoBehaviour
             }
 
             handleDamage();
-
         }
     }
 

@@ -23,7 +23,7 @@ public class RandomEnviromentUnit : MonoBehaviour
         { "west", RandomEdgeType.Empty }
     };
 
-    private int room = 0;
+    public int room = 0;
 
 
     public Dictionary<string, RandomEdgeType> Edges

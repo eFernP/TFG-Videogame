@@ -43,7 +43,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
     private int MAX_DOORS = 50;
     int MAX_ROOM_SIZE = 5;
     int MIN_ROOM_SIZE = 1;
-    int ENEMY_NUMBER = 10;
+    int ENEMY_NUMBER = 6;
 
     private int doorCounter = 0;
     private int pathCounter = 0;
@@ -510,6 +510,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
 
         foreach(GameObject unit in units){
             if(!isPathAvailable(entranceUnit.transform.position, unit.transform.position)){
+                Debug.LogError("Has removed unreachable unit "+unit.name);
                 DestroyImmediate(unit);
             }else{
                 finalAvailableUnits.Add(unit);
@@ -583,6 +584,25 @@ public class SpawnRandomEnviroment : MonoBehaviour
         return freeEdge;
     }
 
+    List<string> getFreeEdges(GameObject unit)
+    {
+        int[] coordinates = unit.GetComponent<RandomEnviromentUnit>().getCoordinates();
+        string[] edges = { "north", "east", "south", "west" };
+
+        List<string> freeEdges = new List<string>();
+
+        foreach (string edge in edges)
+        {
+            if (!getAdjacentUnit(edge, coordinates[0], coordinates[1]))
+            {
+                freeEdges.Add(edge);
+                break;
+            }
+        }
+
+        return freeEdges;
+    }
+
     List<GameObject> getExteriorUnits()
     {
         List<GameObject> exteriorUnits = new List<GameObject>();
@@ -590,7 +610,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
 
         for (int i = 0; i < units.Length; i++)
         {
-            if (getFirstFreeEdge(units[i]) != "")
+            if (getFreeEdges(units[i]).Count > 0)
             {
                 exteriorUnits.Add(units[i]);
             }
@@ -641,7 +661,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
 
     void createSpecialDoor(GameObject unit, int teleportIndex, TeleportUnit originTeleport = null )
     {
-        string edge = getFirstFreeEdge(unit);
+        string edge = getFreeEdges(unit)[0];
 
         foreach (Transform child in unit.transform)
         {
@@ -825,6 +845,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
         surface.BuildNavMesh();
 
         bool isValidMaze = createSpecialRoomDoors();
+        Debug.Log("MISSING WALLS?" + checkMissingWalls());
 
         if (!isValidMaze && emergencyCounter < 50)
         {
@@ -908,7 +929,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
     }
 
     public void addBossRoom(){
-        SaveSystem.SaveGame("MazeScene", true, Constants.SavePositions[1]);
+        SaveSystem.SaveGame("MazeScene", Constants.SavePositions[0], true);
         isBossRoomUnlocked = true;
         createSpecialDoor(battleUnit, 2);
         removeChilds(Map.transform);
@@ -926,6 +947,27 @@ public class SpawnRandomEnviroment : MonoBehaviour
         {
             isFirstTime = false;
         }
+    }
+
+
+    bool checkMissingWalls()
+    {
+        GameObject[] units = GameObject.FindGameObjectsWithTag("RandomUnit");
+        bool hasMissingWalls = false;
+        foreach(GameObject unit in units){
+            List<string> edges = getFreeEdges(unit);
+            foreach (string edge in edges)
+            {
+                if (unit.GetComponent<RandomEnviromentUnit>().Edges[edge] == RandomEdgeType.Empty)
+                {
+                    hasMissingWalls = true;
+                    Debug.LogError("Missing walls!");
+                    break;
+                }
+            }
+        }
+
+        return hasMissingWalls;
     }
 
     void Start()

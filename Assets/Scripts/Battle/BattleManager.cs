@@ -96,17 +96,8 @@ public class BattleManager : MonoBehaviour
         hasBattleStarted = false;
         isDialogueActive = false;
 
-        SaveSystem.SaveGame("BattleScene", true, Constants.SavePositions[2]);
+        SaveSystem.SaveGame("BattleScene", Constants.SavePositions[1], true);
 
-        //instantiatePanel(3);
-        //addDialogue(3, 3);
-        //instantiatePanel(4);
-        //addDialogue(4, 4);
-        //RectTransform rectTransform = panel1.GetComponent<RectTransform>();
-
-        //width = 10;
-        //rectTransform.sizeDelta = new Vector2(0, rectTransform.rect.height); 
-        //Debug.Log(rectTransform.rect.width);
     }
 
 
@@ -366,7 +357,7 @@ public class BattleManager : MonoBehaviour
         }
         if(!isSceneReady && BlackScreenScript.getOpacity() == 0)
         {
-            InformationMessage.show("Controles", "-     Presiona un n�mero del 1 al 5 para pronunciar una s�laba.\n\n-     Mant�n pulsado el bot�n izquierdo del rat�n para usar Impulso.");
+            InformationMessage.show("Controles", "-     Presiona un número del 1 al 5 para pronunciar una sílaba.\n\n-     Mantén pulsado el botón izquierdo del ratón para usar Impulso.");
             isSceneReady = true;
         }
 

@@ -344,6 +344,7 @@ public class Player: MonoBehaviour
 
         if(saveData != null){
             this.transform.position = new Vector3(saveData.Position[0], saveData.Position[1], saveData.Position[2]);
+            changeEye();
         }
 
     }

@@ -7,10 +7,11 @@ using System.Runtime.Serialization.Formatters.Binary;
 public static class SaveSystem 
 {
 
-    public static void SaveGame(string currentScene, bool isBossUnlocked, Vector3 position){
+    public static void SaveGame(string currentScene, Vector3 position, bool isBossUnlocked)
+    {
         BinaryFormatter formatter = new BinaryFormatter();
 	    FileStream file = File.Create(Application.persistentDataPath + "/saveData.dat"); 
-	    SaveData data = new SaveData(currentScene, isBossUnlocked, position);
+	    SaveData data = new SaveData(currentScene, position, isBossUnlocked);
 
 
 	    formatter.Serialize(file, data);
@@ -31,8 +32,17 @@ public static class SaveSystem
             
         }
         else{
-            Debug.LogError("There is no save data!");
             return null;
+        }
+    }
+
+    public static void DeleteData()
+    {
+        SaveData data = LoadGame();
+        if (data != null)
+        {
+            string path = Application.persistentDataPath + "/saveData.dat";
+            File.Delete(path);
         }
     }
 }

@@ -11,7 +11,7 @@ public class Timer : MonoBehaviour
     private TMP_Text displayedTime;
 
     private float remainingTime;
-    private float MINUTES = 1f;
+    private float MINUTES = 0.1f;
     private bool isActive;
 
     // Start is called before the first frame update

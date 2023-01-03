@@ -23,9 +23,10 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    public void PlayGame()
+    public void StartNewGame()
     {
-        SaveSystem.SaveGame("MazeScene", false, Constants.SavePositions[0]);
+        SaveSystem.DeleteData();
+        //SaveSystem.SaveGame("MazeScene", false, Constants.SavePositions[0]);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 

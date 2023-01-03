@@ -10,7 +10,8 @@ public class SaveData
     public bool IsBossUnlocked;
     public float[] Position; 
 
-    public SaveData(string currentScene, bool isBossUnlocked, Vector3 position){
+    public SaveData(string currentScene, Vector3 position, bool isBossUnlocked)
+    {
         
         Position = new float[3];
 

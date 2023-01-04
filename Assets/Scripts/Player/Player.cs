@@ -343,8 +343,13 @@ public class Player: MonoBehaviour
         SaveData saveData = SaveSystem.LoadGame();
 
         if(saveData != null){
+            Debug.Log("SAVED POSITION: " + saveData.Position);
             this.transform.position = new Vector3(saveData.Position[0], saveData.Position[1], saveData.Position[2]);
             changeEye();
+        }
+        else
+        {
+            Debug.Log("NO SAVED DATA");
         }
 
     }

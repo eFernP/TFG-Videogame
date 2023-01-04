@@ -16,7 +16,7 @@ public class MainMenu : MonoBehaviour
 
     void Start(){
         data = SaveSystem.LoadGame();
-
+        Debug.Log("DATA??" + data);
         if(data !=null){
             continueText.GetComponent<TMPro.TextMeshProUGUI>().color = new Color(255, 255, 255, 255);
             continueText.transform.parent.gameObject.GetComponent<Button>().interactable = true;

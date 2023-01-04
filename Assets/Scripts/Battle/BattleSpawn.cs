@@ -13,8 +13,8 @@ public class BattleSpawn : MonoBehaviour
 
 
     public static int MAX_STONE_NUMBER = 5;
-    public static int MAX_PROJECTILES_NUMBER = 30;
-    private int projectilesCounter = 0;
+    //public static int MAX_PROJECTILES_NUMBER = 30;
+    //private int projectilesCounter = 0;
 
     private List<GameObject> currentStones = new List<GameObject>(MAX_STONE_NUMBER);
 
@@ -38,7 +38,7 @@ public class BattleSpawn : MonoBehaviour
 
     Vector3 getRandomPosition(float margin)
     {
-        return new Vector3(Random.Range(this.transform.position.x - FloorSize[0]/2 + margin, this.transform.position.x + FloorSize[0] / 2 - margin), 20f, Random.Range(this.transform.position.z - FloorSize[1] / 2 +margin, this.transform.position.z + FloorSize[1] / 2-margin));
+        return new Vector3(Random.Range(this.transform.position.x - FloorSize[0]/2 + margin, this.transform.position.x + FloorSize[0] / 2 - margin), 12f, Random.Range(this.transform.position.z - FloorSize[1] / 2 +margin, this.transform.position.z + FloorSize[1] / 2-margin));
     }
 
     void SpawnProjectile()
@@ -58,10 +58,10 @@ public class BattleSpawn : MonoBehaviour
         {
             SpawnTimer -= Time.deltaTime;
             SpawnStoneTimer -= Time.deltaTime;
-            if (SpawnTimer <= 0 && projectilesCounter < MAX_PROJECTILES_NUMBER)
+            if (SpawnTimer <= 0)
             {
                 SpawnProjectile();
-                projectilesCounter++;
+                //projectilesCounter++;
                 SpawnTimer = SPAWN_TIME;
             }
 
@@ -76,19 +76,19 @@ public class BattleSpawn : MonoBehaviour
                 }
             }
         }
-        else
-        {
-            if(projectilesCounter > 0)
-            {
-                GameObject[] projectiles = GameObject.FindGameObjectsWithTag("MagicDamage");
-                foreach (GameObject p in projectiles)
-                {
-                    Destroy(p);
-                }
-                projectilesCounter = 0;
-            }
+        //else
+        //{
+        //    if(projectilesCounter > 0)
+        //    {
+        //        GameObject[] projectiles = GameObject.FindGameObjectsWithTag("MagicDamage");
+        //        foreach (GameObject p in projectiles)
+        //        {
+        //            Destroy(p);
+        //        }
+        //        projectilesCounter = 0;
+        //    }
 
-        }
+        //}
 
     }
 }

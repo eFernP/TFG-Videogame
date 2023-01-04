@@ -7,10 +7,10 @@ public class RandomEnviromentUnit : MonoBehaviour
 
 
     //deprecated
-    private RandomEdgeType north;
-    private RandomEdgeType south;
-    private RandomEdgeType east;
-    private RandomEdgeType west;
+    public RandomEdgeType north;
+    public RandomEdgeType south;
+    public RandomEdgeType east;
+    public RandomEdgeType west;
     private int[] coordinates;
     // 
 
@@ -31,10 +31,6 @@ public class RandomEnviromentUnit : MonoBehaviour
         get
         { 
             return edges;
-        }
-        set
-        { 
-            edges = value; 
         }
     }
 
@@ -75,6 +71,10 @@ public class RandomEnviromentUnit : MonoBehaviour
 
     public void setEdge(RandomEdgeType value, string edgeName)
     {
+        if(edgeName =="north") this.north = value;
+        if (edgeName == "south") this.south = value;
+        if (edgeName == "east") this.east = value;
+        if (edgeName == "west") this.west = value;
         this.edges[edgeName]=value;
     }
 

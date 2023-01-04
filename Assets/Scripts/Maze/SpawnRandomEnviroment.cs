@@ -395,7 +395,22 @@ public class SpawnRandomEnviroment : MonoBehaviour
         return UnitInstance;
     }
 
-
+    void checkEdges(GameObject unit, int x, int z)
+    {
+        string[] edgeNames = { "north", "east", "west", "south" };
+        foreach(string edgeName in edgeNames)
+        {
+            if (unit.GetComponent<RandomEnviromentUnit>().Edges[edgeName] == RandomEdgeType.Empty)
+            {
+                GameObject adjacentUnit = getAdjacentUnit(edgeName, x, z);
+                if(adjacentUnit != null)
+                {
+                    RandomEdgeType adjacentUnitEdgeType = getUnitEdgeType(getOppositeCardinalPoint(edgeName), adjacentUnit);
+                    unit.GetComponent<RandomEnviromentUnit>().setEdge(adjacentUnitEdgeType, edgeName);
+                }
+            }
+        }
+    }
 
     void generateRooms(string prevRoomDoorEdge = null, int[] prevRoomDoorPosition = null)
     {
@@ -471,6 +486,8 @@ public class SpawnRandomEnviroment : MonoBehaviour
                             createdDoorsLocation.Add(new List<object> { "south", (object)i, (object)j });
                         }
                     }
+
+                    checkEdges(UnitInstance, i, j);
                 }
             }
         }
@@ -511,7 +528,8 @@ public class SpawnRandomEnviroment : MonoBehaviour
         foreach(GameObject unit in units){
             if(!isPathAvailable(entranceUnit.transform.position, unit.transform.position)){
                 Debug.LogError("Has removed unreachable unit "+unit.name);
-                DestroyImmediate(unit);
+                //DestroyImmediate(unit);
+                unit.tag = "Untagged";
             }else{
                 finalAvailableUnits.Add(unit);
             }
@@ -687,16 +705,16 @@ public class SpawnRandomEnviroment : MonoBehaviour
     {
 
         List<WeightedUnit> WeightedUnits = getExteriorWeightedUnits();
-
-        WeightedUnit entranceWeightedUnit = WeightedUnits.Aggregate((i1, i2) => i1.weight > i2.weight ? i1 : i2);
+        Debug.Log("first count" + WeightedUnits.Count);
+        WeightedUnit entranceWeightedUnit = WeightedUnits.Aggregate((i1, i2) => i1.weight < i2.weight ? i1 : i2);
         entranceUnit = entranceWeightedUnit.unit;
         WeightedUnits.Remove(entranceWeightedUnit);
 
         bool isValidMaze = removeUnreachableUnits();
         if(isValidMaze){
-            WeightedUnits.RemoveAll(item => item.unit == null);
-
-            WeightedUnit archivesWeightedUnit = WeightedUnits.Aggregate((i1, i2) => i1.weight < i2.weight ? i1 : i2);
+            WeightedUnits.RemoveAll(item => item.unit.tag == "Untagged");
+            Debug.Log("second count" + WeightedUnits.Count);
+            WeightedUnit archivesWeightedUnit = WeightedUnits.Aggregate((i1, i2) => i1.weight > i2.weight ? i1 : i2);
             archivesUnit = archivesWeightedUnit.unit;
             WeightedUnits.Remove(archivesWeightedUnit);
 
@@ -708,7 +726,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
             if(isBossRoomUnlocked){
                 createSpecialDoor(battleUnit, 2);
             }
-
+           
             entranceRoom = entranceUnit.GetComponent<RandomEnviromentUnit>().Room;
 
             //return new Vector3[] { entranceUnit.transform.position, archiveUnit.transform.position };
@@ -845,7 +863,6 @@ public class SpawnRandomEnviroment : MonoBehaviour
         surface.BuildNavMesh();
 
         bool isValidMaze = createSpecialRoomDoors();
-        Debug.Log("MISSING WALLS?" + checkMissingWalls());
 
         if (!isValidMaze && emergencyCounter < 50)
         {
@@ -869,7 +886,6 @@ public class SpawnRandomEnviroment : MonoBehaviour
         availableUnits = GameObject.FindGameObjectsWithTag("RandomUnit");
         List<GameObject> availablePositions = new List<GameObject>(availableUnits);
         availablePositions.RemoveAll(position => position.GetComponent<RandomEnviromentUnit>().Room == entranceRoom);
-
         for (int i = 0; i < ENEMY_NUMBER; i++)
         {
             if (availablePositions.Count == 0) break;
@@ -947,27 +963,6 @@ public class SpawnRandomEnviroment : MonoBehaviour
         {
             isFirstTime = false;
         }
-    }
-
-
-    bool checkMissingWalls()
-    {
-        GameObject[] units = GameObject.FindGameObjectsWithTag("RandomUnit");
-        bool hasMissingWalls = false;
-        foreach(GameObject unit in units){
-            List<string> edges = getFreeEdges(unit);
-            foreach (string edge in edges)
-            {
-                if (unit.GetComponent<RandomEnviromentUnit>().Edges[edge] == RandomEdgeType.Empty)
-                {
-                    hasMissingWalls = true;
-                    Debug.LogError("Missing walls!");
-                    break;
-                }
-            }
-        }
-
-        return hasMissingWalls;
     }
 
     void Start()

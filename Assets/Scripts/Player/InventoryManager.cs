@@ -24,10 +24,18 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    public void addObjects(string[] names, bool enabledSpecialActions = true)
+    {
+        foreach (string name in names)
+        {
+            Inventory[name] = true;
+            if (enabledSpecialActions)
+            {
+                checkSpecialAction(name);
+            }
+            
+        }
 
-    public void addObject(string objectName){
-        Inventory[objectName] = true;
-        checkSpecialAction(objectName);
     }
 
     public bool hasObject(string objectName){
@@ -43,7 +51,7 @@ public class InventoryManager : MonoBehaviour
 
         if (saveData != null && saveData.IsBossUnlocked)
         {
-            addObject("Key");
+            addObjects(new string[] { "Key", "Eye" }, false);
         }
     }
 

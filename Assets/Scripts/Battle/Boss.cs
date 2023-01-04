@@ -21,6 +21,8 @@ public class Boss : MonoBehaviour
 
     public GameObject Body;
     public GameObject Head;
+    public GameObject RightShoulder;
+    public GameObject LeftShoulder;
 
     private float initialPosition;
     private int rotationSpeed = 600;
@@ -77,9 +79,12 @@ public class Boss : MonoBehaviour
 
         Material headMaterial = Head.GetComponent<Renderer>().material;
         Material[] bodyMaterials = Body.GetComponentInChildren<SkinnedMeshRenderer>().materials;
-
+        Material leftShoulderMaterial = LeftShoulder.GetComponent<Renderer>().material;
+        Material rightShoulderMaterial = RightShoulder.GetComponent<Renderer>().material;
         bodyMaterials[0].SetFloat("_DissolveValue", dissolveValue);
         headMaterial.SetFloat("_DissolveValue", dissolveValue);
+        leftShoulderMaterial.SetFloat("_DissolveValue", dissolveValue);
+        rightShoulderMaterial.SetFloat("_DissolveValue", dissolveValue);
 
     }
 

@@ -17,10 +17,10 @@ public class OnEnemyAttack : StateMachineBehaviour
     //}
 
     //OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        Debug.Log("FINISH TRANSITION");
-    }
+    //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
+    //    
+    //}
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
     override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -29,7 +29,6 @@ public class OnEnemyAttack : StateMachineBehaviour
         animator.SetBool("isMoving", false);
         if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
         {
-            Debug.Log("STOP ATTACKING" + animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
             animator.SetBool("isAttacking", false);
         }
     }

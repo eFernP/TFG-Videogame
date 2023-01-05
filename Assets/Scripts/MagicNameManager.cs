@@ -125,7 +125,7 @@ public class MagicNameManager : InteractiveObject
     void onUseMagic()
     {
         string pronouncedName = playerVoiceManager.getPronouncedName();
-        Debug.Log("USE MAGIC"+ pronouncedName);
+
         if (type + "_" + pronouncedName == this.name)
         {
             int actionId = playerPoseManager.getAction();
@@ -148,17 +148,10 @@ public class MagicNameManager : InteractiveObject
             StartCoroutine(ShowSyllableSprites());
         }
 
-        //UNCOMMENT TO TEST FASTER
-        //if (Input.GetKeyDown(KeyCode.B))
-        //{
-        //    Impulse();
-        //}
-
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(collision.collider.name);
 
         if (collision.collider.name == "Floor")
         {

@@ -53,8 +53,8 @@ public class PlayerPoseManager : MonoBehaviour
     {
 
 
-        checkPose(1, KeyCode.Mouse0);
-        checkPose(2, KeyCode.Mouse1);
+        checkPose(1, KeyCode.Mouse1);
+        //checkPose(2, KeyCode.Mouse1);
 
     }
 }

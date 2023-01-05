@@ -527,8 +527,6 @@ public class SpawnRandomEnviroment : MonoBehaviour
 
         foreach(GameObject unit in units){
             if(!isPathAvailable(entranceUnit.transform.position, unit.transform.position)){
-                Debug.LogError("Has removed unreachable unit "+unit.name);
-                //DestroyImmediate(unit);
                 unit.tag = "Untagged";
             }else{
                 finalAvailableUnits.Add(unit);
@@ -705,7 +703,6 @@ public class SpawnRandomEnviroment : MonoBehaviour
     {
 
         List<WeightedUnit> WeightedUnits = getExteriorWeightedUnits();
-        Debug.Log("first count" + WeightedUnits.Count);
         WeightedUnit entranceWeightedUnit = WeightedUnits.Aggregate((i1, i2) => i1.weight < i2.weight ? i1 : i2);
         entranceUnit = entranceWeightedUnit.unit;
         WeightedUnits.Remove(entranceWeightedUnit);
@@ -713,7 +710,7 @@ public class SpawnRandomEnviroment : MonoBehaviour
         bool isValidMaze = removeUnreachableUnits();
         if(isValidMaze){
             WeightedUnits.RemoveAll(item => item.unit.tag == "Untagged");
-            Debug.Log("second count" + WeightedUnits.Count);
+
             WeightedUnit archivesWeightedUnit = WeightedUnits.Aggregate((i1, i2) => i1.weight > i2.weight ? i1 : i2);
             archivesUnit = archivesWeightedUnit.unit;
             WeightedUnits.Remove(archivesWeightedUnit);
@@ -866,17 +863,12 @@ public class SpawnRandomEnviroment : MonoBehaviour
 
         if (!isValidMaze && emergencyCounter < 50)
         {
-            Debug.Log("MAZE NOT CREATED AT FIRST TIME");
-
             removeMaze();
             emergencyCounter++;
-            //NavMesh.RemoveNavMeshData(surface.NavMeshData);
-            //Destroy(surface);
-            //spawnMaze();
         }
         else
         {
-            generateMap(); //UNCOMMENT
+            generateMap();
             isMazeActive = true;
         }
     }

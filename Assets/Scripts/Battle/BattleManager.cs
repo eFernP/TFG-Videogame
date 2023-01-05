@@ -139,10 +139,8 @@ public class BattleManager : MonoBehaviour
 
     void instantiatePanel(int index)
     {
-        Debug.Log("INSTANTIATE"+index);
-        Debug.Log(PanelPrefab);
+
         GameObject newPanel = Instantiate(PanelPrefab, new Vector3(0,0,0), Quaternion.identity, HeroCanvas.transform);
-        Debug.Log(newPanel);
 
         newPanel.name = "Panel_"+ index;
         RectTransform rectTransform = newPanel.GetComponent<RectTransform>();
@@ -150,7 +148,7 @@ public class BattleManager : MonoBehaviour
 
         RectTransform rectTransformText = newPanel.transform.GetChild(0).GetComponent<RectTransform>();
         rectTransformText.sizeDelta = new Vector2((panelSize/100)*80, rectTransformText.rect.height);
-        Debug.Log("INSTANTIATE 2");
+
         if (selectedPanel == index)
         {
             updatePanelSprite(newPanel, selectedPanelSprite);
@@ -160,7 +158,7 @@ public class BattleManager : MonoBehaviour
         {
             changePanelTransparency(newPanel, 0.5f);
         }
-        Debug.Log("instance" + index);
+
         currentPanels[index - 1] = newPanel;
 
     }
@@ -174,7 +172,6 @@ public class BattleManager : MonoBehaviour
             GameObject panel = currentPanels[currentDialogueId.Key - 1];
             currentPanels[currentDialogueId.Key - 1] = null;
             Destroy(panel);
-            Debug.Log("PANEL AFTER DESTROY??");
         }
     }
 
@@ -185,14 +182,10 @@ public class BattleManager : MonoBehaviour
         calculatePanelSize();
 
 
-        Debug.Log("INIT");
         foreach (KeyValuePair<int, int> currentDialogueId in currentDialogues)
         {
-            Debug.Log("PAIRS "+currentDialogueId.Key + " " + currentDialogueId.Value);
             instantiatePanel(currentDialogueId.Key);
             addDialogue(currentDialogueId.Key, currentDialogueId.Value);
-
-
         }
     }
 
@@ -357,7 +350,7 @@ public class BattleManager : MonoBehaviour
         }
         if(!isSceneReady && BlackScreenScript.getOpacity() == 0)
         {
-            InformationMessage.show("Controles", "-     Presiona un número del 1 al 5 para pronunciar una sílaba.\n\n-     Mantén pulsado el botón izquierdo del ratón para usar Impulso.");
+            InformationMessage.show("Controles", "-     Presiona un número del 1 al 5 para pronunciar una sílaba.\n\n-     Mantén pulsado el botón derecho del ratón para usar Impulso.");
             isSceneReady = true;
         }
 
@@ -387,23 +380,11 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("FINISH COMBAT");
                 currentPhase = -1;
                 startBossDialogue(Constants.LastBattleDialogues[0]);
             }
 
         }
-
-        //TO TEST
-        //if (Input.GetKeyUp(KeyCode.P))
-        //{
-        //    currentPhase = 1;
-        //    BossDialogues = Constants.BossDialogues[RoundNumber];
-        //    HeroDialogues = Constants.HeroDialogues[RoundNumber];
-        //    RoundNumber++;
-        //    selectedPanel = -1;
-        //    startBossDialogue(BossDialogues[1].Messages);
-        //}
 
     }
 
@@ -414,14 +395,12 @@ public class BattleManager : MonoBehaviour
         {
             currentPhase = 1;
             hasBattleStarted = true;
-            Debug.Log("INIT THE PANELS");
             initPanels();
         }
     }
 
     void OnDisable()
     {
-        Debug.Log("DISABLE");
         Subtitles.onFinishDialogue -= onFinishBossDialogue;
     }
 }

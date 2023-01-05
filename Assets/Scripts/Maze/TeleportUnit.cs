@@ -72,7 +72,6 @@ public class TeleportUnit : MonoBehaviour
     {
         if (hasMazeDestination == null)
         {
-            Debug.Log("HAS NULL BOOL");
             hasMazeDestination = false;
         }
 

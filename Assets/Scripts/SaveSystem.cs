@@ -16,7 +16,6 @@ public static class SaveSystem
 
 	    formatter.Serialize(file, data);
 	    file.Close();
-	    Debug.Log("Game data saved!");
     }
 
     public static SaveData LoadGame(){

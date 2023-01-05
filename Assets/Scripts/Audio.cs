@@ -34,7 +34,6 @@ public class Audio : MonoBehaviour
 
         foreach(Vocals v in vocals)
         {
-            Debug.Log(v.Text);
             AudioClip clip = Resources.Load<AudioClip>("Audio/" + v.ClipPath);
             //source.PlayOneShot(clip); UNCOMMENT when clips are ready
             yield return new WaitForSeconds(1); //Change for clip.length when the clip exists

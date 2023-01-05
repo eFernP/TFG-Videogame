@@ -53,7 +53,7 @@ public class BlinkMaterial : MonoBehaviour
         if (isBlinking)
         {
             float fresnelPower = material.GetFloat("_FresnelPower");
-            Debug.Log(fresnelPower);
+
             if (increasing)
             {
                 material.SetFloat("_FresnelPower", fresnelPower + Time.deltaTime * speed);

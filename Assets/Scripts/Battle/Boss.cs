@@ -216,25 +216,12 @@ public class Boss : MonoBehaviour
 
         if (specialAttackStep == 1)
         {
-            //float angle = Quaternion.Angle(this.transform.rotation, facingTargetRotation);
-            //if (angle >= 1)
-            //{
-
-            //    status = BossStatus.NotMoving;
-            //    this.transform.rotation = Quaternion.RotateTowards(this.transform.rotation, facingTargetRotation, rotationSpeed * Time.deltaTime);
-            //}
-            //else
-            //{
-            //Debug.Log("FIRST STEP");
-            //printState();
             hasCollided = false;
             this.transform.rotation = Quaternion.RotateTowards(this.transform.rotation, facingTargetRotation, rotationSpeed * Time.deltaTime);
 
             specialAttackStep = 2;
 
             animator.SetBool("isPreparing", true);
-            //}
-
         }
         else if (specialAttackStep == 2)
         {
@@ -256,11 +243,6 @@ public class Boss : MonoBehaviour
             {
                 specialAttackStep = 4;
                 this.transform.Translate(Vector3.forward * speedBeforeCharge * Time.deltaTime);
-                //navMeshAgent.speed = speed;
-                //navMeshAgent.acceleration = 10;
-                //changeState(BossStatus.Attacking, "isCharging", "isAttacking");
-                //Debug.Log("THIRD STEP");
-                //printState();
                 animator.SetBool("isAttacking", true);
                 animator.SetBool("isCharging", false);
             }
@@ -272,13 +254,7 @@ public class Boss : MonoBehaviour
                     ChangeDissolveValue(invisibleMeshValue);
                 }
 
-
-                //navMeshAgent.speed = invisibleSpeed;
-                //navMeshAgent.acceleration = invisibleSpeed * 4;
-                //navMeshAgent.SetDestination(targetPosition);
                 this.transform.Translate(Vector3.forward * invisibleSpeed * Time.deltaTime);
-                //Debug.Log(this.transform.rotation + " " + facingTargetRotation);
-
 
             }
 
@@ -296,9 +272,6 @@ public class Boss : MonoBehaviour
                 isSpecialAttack = false;
                 hasCollided = false;
                 animator.SetBool("isAttacking", false);
-                //Debug.Log("LAST STEP");
-                //printState();
-                //changeState(BossStatus.OnGuard, "isAttacking", null);
                 specialAttackStep = 0;
 
             }
@@ -387,10 +360,8 @@ public class Boss : MonoBehaviour
         }
         else
         {
-            Debug.Log("FINISH BATTLE");
             this.gameObject.SetActive(false);
             battleFinished = true;
-            Debug.Log("BATTLE FINISHED");
         }
     }
 
@@ -427,16 +398,6 @@ public class Boss : MonoBehaviour
         {
             friendshipBar.SetValue(friendshipBar.GetValue() + (float)STONE_COLLISION_POINTS);
             AudioManager.PlaySound(stoneImpact);
-            //FOR TESTING
-            //if(roundForTesting == 2)
-            //{
-            //    friendshipBar.SetValue(100f);
-            //}
-            //else
-            //{
-            //    friendshipBar.SetValue(60f);
-            //    roundForTesting++;
-            //}
 
         }
 

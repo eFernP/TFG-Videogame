@@ -53,6 +53,7 @@ public class InventoryManager : MonoBehaviour
         {
             addObjects(new string[] { "Key", "Eye" }, false);
         }
+
     }
 
 }

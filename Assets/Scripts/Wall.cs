@@ -14,7 +14,6 @@ public class Wall : MonoBehaviour
 
     void OnTriggerEnter(Collider collider)
     {
-        Debug.Log("WALL HIT " + collider.name);
         if (collider.name == "Boss")
         {
             boss.handleCollision();

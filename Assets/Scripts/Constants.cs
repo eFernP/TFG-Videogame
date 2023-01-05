@@ -6,7 +6,7 @@ public class Constants
 {
     public static string[] SYLLABLES = { "Ei", "Ri", "Ha", "Go", "Kal" };
 
-    public static Vector3[] SavePositions = { new Vector3(-41.4f, 68.1f, 21.5f), new Vector3(-54f,12f,33f) };
+    public static Vector3[] SavePositions = { new Vector3(-41.4f, 64.4f, 33f), new Vector3(-54f,12f,33f) };
 
     public static string STONE_TYPE = "Stone";
     public static string ENEMY_TYPE = "Enemy";

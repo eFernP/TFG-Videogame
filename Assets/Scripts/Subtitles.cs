@@ -24,7 +24,6 @@ public class Subtitles : MonoBehaviour
         foreach (Vocals v in vocals)
         {
             subtitle.text = v.Text;
-            Debug.Log(v.Text);
             string[] SplittedText = v.Text.Split(" ");
             float seconds = (float)SplittedText.Length / WPM * 60;
             yield return new WaitForSeconds(0.5f);

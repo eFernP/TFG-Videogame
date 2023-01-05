@@ -34,10 +34,6 @@ public class MagicRay : MonoBehaviour
         yield return new WaitForSeconds(2.6f);
         remainingTime = SECONDS;
         hasTimeEnded = false;
-        //vfx.Stop();
-        //Debug.Log("STOP");
-        //Destroy(this.gameObject, 4f);
-        //
     }
 
    // Update is called once per frame

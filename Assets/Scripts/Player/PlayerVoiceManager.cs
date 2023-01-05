@@ -109,10 +109,8 @@ public class PlayerVoiceManager : MonoBehaviour
 
                     pronouncedName.Add(syllable.Value.Name);
 
-                    Debug.Log(pronouncedName.Count);
                     if (pronouncedName.Count >= NAME_LENGTH)
                     {
-                        Debug.Log("use magic?");
                         onUseMagic();
                     }
                 }

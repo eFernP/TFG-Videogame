@@ -74,7 +74,6 @@ public class Enemy : MonoBehaviour
 
     void PlaySound(AudioClip clip, bool isOneShot = false)
     {
-        Debug.Log("CLIPP??" + clip);
         if (isOneShot)
         {
             audioSource.PlayOneShot(clip);
@@ -230,11 +229,7 @@ public class Enemy : MonoBehaviour
                 hasReachedDestination = true;
                 co = StartCoroutine(changeDestination());
             }
-            //else
-            //{
-            //    Debug.Log("to real destination");
-            //    agent.SetDestination(destination);
-            //}
+
         }
 
 

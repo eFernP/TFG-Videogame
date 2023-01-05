@@ -111,12 +111,15 @@ public class Player: MonoBehaviour
     void move(Vector3 movementDirection)
     {
         if (characterController.isGrounded) verticalSpeed = 0;
-
         verticalSpeed -= GRAVITY * Time.deltaTime * 10; //if it is not multiplied by 10, the fall is too slow
         Vector3 velocity = movementDirection * 1 * speed;
         velocity.y = verticalSpeed;
 
-        characterController.Move(velocity * Time.deltaTime);
+        if (velocity.x != 0 || velocity.y != 0 || velocity.z != 0)
+        {
+            characterController.Move(velocity * Time.deltaTime);
+        }
+    
 
         if (movementDirection != Vector3.zero)
         {
@@ -243,7 +246,6 @@ public class Player: MonoBehaviour
 
     public void handleDamage()
     {
-        Debug.Log("INVULNE?" + isInvulnerable);
         if (!isInvulnerable)
         {
             lifeCounter--;
@@ -280,7 +282,6 @@ public class Player: MonoBehaviour
         {
             if (BlackScreenScript.getOpacity() < 1)
             {
-                Debug.Log("Fade oput");
                 BlackScreenScript.fadeOut();
             }
             else
@@ -343,13 +344,10 @@ public class Player: MonoBehaviour
         SaveData saveData = SaveSystem.LoadGame();
 
         if(saveData != null){
-            Debug.Log("SAVED POSITION: " + saveData.Position);
+            Debug.Log(characterController.transform.position);
             this.transform.position = new Vector3(saveData.Position[0], saveData.Position[1], saveData.Position[2]);
+            characterController.transform.position = new Vector3(saveData.Position[0], saveData.Position[1], saveData.Position[2]);
             changeEye();
-        }
-        else
-        {
-            Debug.Log("NO SAVED DATA");
         }
 
     }
@@ -358,7 +356,6 @@ public class Player: MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (mazeTimer != null && mazeTimer.hasEnded() && isInsideMaze && !isDyingByMaze)
         {
             isDyingByMaze = true;
@@ -403,16 +400,19 @@ public class Player: MonoBehaviour
         if (isPressingMovementKey() && (playerPoseManager == null || !playerPoseManager.isPosing()))
         {
 
-            if(isInStealth && isRunning){
+            if (isInStealth && isRunning)
+            {
                 animator.SetBool("isRunning", false);
             }
 
-            if(isInStealth && !animator.GetBool("isInStealth")){
+            if (isInStealth && !animator.GetBool("isInStealth"))
+            {
                 animator.SetBool("isInStealth", true);
                 speed = STEALTH_SPEED;
             }
 
-            if(!isInStealth && animator.GetBool("isInStealth")){
+            if (!isInStealth && animator.GetBool("isInStealth"))
+            {
                 animator.SetBool("isInStealth", false);
                 speed = STEALTH_SPEED;
             }
@@ -437,10 +437,6 @@ public class Player: MonoBehaviour
                 animator.SetBool("isInStealth", false);
                 speed = SPEED;
             }
-            // if(animator.GetBool("isInStealth")){
-            //     animator.SetBool("isInStealth", false);
-            //     speed = SPEED;
-            // };
         }
 
         move(movementDirection);
@@ -474,7 +470,6 @@ public class Player: MonoBehaviour
             {
                 boss.handleCollision();
             }
-
             handleDamage();
         }
     }

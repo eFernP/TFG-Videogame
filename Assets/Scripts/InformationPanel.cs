@@ -27,7 +27,6 @@ public class InformationPanel : MonoBehaviour
     void hideOtherUIObjects()
     {
         foreach(GameObject ui in otherUIObjects){
-            Debug.Log("disactivate" + ui.name);
             ui.SetActive(false);
         }
     }
@@ -44,13 +43,7 @@ public class InformationPanel : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Return))
         {
-            Debug.Log("HIDE"+Panel);
             togglePanel(false);
         }
-        // if (Input.GetKeyDown(KeyCode.B))
-        // {
-        //     hideOtherUIObjects();
-        //     show("HOLA", "testing testing");
-        // }
     }
 }

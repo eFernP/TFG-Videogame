@@ -14,24 +14,6 @@ public class MagicNamesStack : MonoBehaviour
     
     private static string[] StoneNames = new string[(int)System.Math.Pow(MagicSyllables.Length, MAGIC_NAME_LENGTH_WITHOUT_PREFIX)];
     private Stack<string> UsedStoneNames = new Stack<string>((int)System.Math.Pow(MagicSyllables.Length, MAGIC_NAME_LENGTH_WITHOUT_PREFIX));
-    //string[] getSyllableCombinations(int length)
-    //{
-    //    //string[,] ArrayNames = new string[(int)System.Math.Pow(MagicSyllables.Length, length), length];
-    //    string[] MappedArray = new string[(int)System.Math.Pow(MagicSyllables.Length, length)];
-
-    //    for (int i = 0; i<(int)System.Math.Pow(MagicSyllables.Length, length); i++)
-    //    {
-    //        string[] ArrayName = new string[length];
-    //        for (int j = 0; j<length; j++)
-    //        {
-    //            ArrayName[length - j - 1] = MagicSyllables[(i / (int)System.Math.Pow(MagicSyllables.Length, j)) % MagicSyllables.Length];
-    //        }
-    //        MappedArray[i] =  String.Join("_", ArrayName);
-    //    }
-
-    //    return MappedArray;
-    //}
-
 
     string[] getRandomMagicNameArray(int length, string prefix)
     {
@@ -79,27 +61,9 @@ public class MagicNamesStack : MonoBehaviour
     void Awake()
     {
 
-        //TWO-LENGTH WORDS
-        //for (int i = 0; i < MagicSyllables.Length; i++)
-        //{
-        //    int index = i * MagicSyllables.Length;
-        //    for (int j = index; j < index + MagicSyllables.Length; j++)
-        //    {
-        //        MagicNames[j,0] = MagicSyllables[i];
-        //        MagicNames[j,1] = MagicSyllables[j % MagicSyllables.Length];
-        //        Debug.Log(MagicNames[j,0] + "-" + MagicNames[j,1]);
-        //    }
-        //}
-
         StoneNames = getRandomMagicNameArray(MAGIC_NAME_LENGTH_WITHOUT_PREFIX, Constants.NAME_PREFIX[Constants.STONE_TYPE]);
         refillStoneStack();
 
-
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

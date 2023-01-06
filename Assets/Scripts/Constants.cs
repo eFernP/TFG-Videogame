@@ -26,7 +26,7 @@ public class Constants
             {
                 {1, new HeroDialogue(1, "No me hagas daño, por favor.", 1, new int[] { 3 }, new int[]{}, 10, 10)},
                 {2, new HeroDialogue(2, "Detente o lo lamentarás.", 2, new int[] { 4 }, new int[]{ }, -10, 10)},
-                {3, new HeroDialogue(3, "He venido a buscar a alguien.", 4, new int[]{6,7},  new int[]{ }, 5, 10)},
+                {3, new HeroDialogue(3, "Buscaba a alguien, pero he llegado demasiado tarde.", 4, new int[]{6,7},  new int[]{ }, 5, 10)},
                 {4, new HeroDialogue(4, "¿Sabes acaso quién soy?", 3, new int[]{5,6},  new int[]{ }, -5, 10)},
                 {5, new HeroDialogue(5, "¿Quién eres tú?", 5, new int[]{ },  new int[]{ }, 0, 10)},
                 {6, new HeroDialogue(6, "¿Qué es este lugar?", 6, new int[]{ },  new int[]{ }, 0, 10)},

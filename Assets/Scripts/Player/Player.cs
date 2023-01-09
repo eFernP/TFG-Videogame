@@ -344,9 +344,11 @@ public class Player: MonoBehaviour
         SaveData saveData = SaveSystem.LoadGame();
 
         if(saveData != null){
-            Debug.Log(characterController.transform.position);
-            this.transform.position = new Vector3(saveData.Position[0], saveData.Position[1], saveData.Position[2]);
-            characterController.transform.position = new Vector3(saveData.Position[0], saveData.Position[1], saveData.Position[2]);
+            if(currentScene.name == "MazeScene")
+            {
+                this.transform.position = new Vector3(saveData.Position[0], saveData.Position[1], saveData.Position[2]);
+                characterController.transform.position = new Vector3(saveData.Position[0], saveData.Position[1], saveData.Position[2]);
+            }
             changeEye();
         }
 

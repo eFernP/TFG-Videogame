@@ -40,10 +40,10 @@ public class SpawnRandomEnviroment : MonoBehaviour
     private int UI_FLOOR_SIZE = 20;
     private int MAX_DOORS_FOR_ROOM = 3;
     private int MAX_PATH = 3;
-    private int MAX_DOORS = 50;
+    private int MAX_DOORS = 30; //50
     int MAX_ROOM_SIZE = 5;
     int MIN_ROOM_SIZE = 1;
-    int ENEMY_NUMBER = 6;
+    int ENEMY_NUMBER = 4; //6
 
     private int doorCounter = 0;
     private int pathCounter = 0;
@@ -905,12 +905,11 @@ public class SpawnRandomEnviroment : MonoBehaviour
     }
 
     void spawnKey(){
-        if (!PlayerInventory.hasObject("Key"))
-        {
-            int randomPosition = Random.Range(0, availableUnits.Length);
-            GameObject unit = availableUnits[randomPosition];
-            Instantiate(Key, new Vector3(unit.transform.position.x, 0f, unit.transform.position.z), Quaternion.identity, this.transform);
-        }
+
+        int randomPosition = Random.Range(0, availableUnits.Length);
+        GameObject unit = availableUnits[randomPosition];
+        Instantiate(Key, new Vector3(unit.transform.position.x, 0f, unit.transform.position.z), Quaternion.identity, this.transform);
+
     }
 
 

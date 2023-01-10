@@ -13,6 +13,12 @@ public class Loot : InteractiveObject
     {
         base.Start();
         Inventory = base.hero.GetComponent<InventoryManager>();
+        SaveData saveData = SaveSystem.LoadGame();
+
+        if((saveData != null && saveData.IsBossUnlocked) || Inventory.hasObject("Key"))
+        {
+            Destroy(this.gameObject);
+        }
     }
 
     // Update is called once per frame

@@ -26,6 +26,7 @@ public class PlayerPoseManager : MonoBehaviour
     {
         if (Input.GetKeyDown(keyCode))
         {
+            VoiceManager.clearPronouncedName();
             currentPose = pose;
             animator.SetBool("isRunning", false);
             animator.SetBool("isDoingPose" + pose, true);
@@ -34,7 +35,6 @@ public class PlayerPoseManager : MonoBehaviour
         {
             currentPose = 0;
             animator.SetBool("isDoingPose" + pose, false);
-            VoiceManager.clearPronouncedName();
         }
     }
 
